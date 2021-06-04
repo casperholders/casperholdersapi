@@ -6,11 +6,13 @@ var logger = require('morgan');
 
 var balanceRouter = require('./routes/balance');
 var delegateRouter = require('./routes/delegate');
+var undelegateRouter = require('./routes/undelegate');
+var transferRouter = require('./routes/transfer');
 
 var app = express();
 
 app.use(cors({
-    origin: 'http://localhost:8080',
+    origin: process.env.ORIGIN,
     optionsSuccessStatus: 200
 }))
 
@@ -21,5 +23,7 @@ app.use(cookieParser());
 
 app.use('/balance', balanceRouter);
 app.use('/delegate', delegateRouter);
+app.use('/undelegate', undelegateRouter);
+app.use('/transfer', transferRouter);
 
 module.exports = app;

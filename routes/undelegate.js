@@ -20,8 +20,7 @@ router.post('/', function (req, res, next) {
 });
 
 router.post('/prepare', function (req,res,next){
-    let delegateContract = new Contracts.Contract(__dirname + "/../contracts/delegate.wasm");
-    console.log(req.body.from);
+    let delegateContract = new Contracts.Contract(__dirname + "/../contracts/undelegate.wasm");
     let publicKey = PublicKey.fromHex(req.body.from);
     const session = DeployUtil.ExecutableDeployItem.newModuleBytes(delegateContract.sessionWasm, RuntimeArgs.fromMap({
         delegator: CLValue.publicKey(publicKey),
@@ -29,7 +28,7 @@ router.post('/prepare', function (req,res,next){
         validator: CLValue.publicKey(PublicKey.fromHex("0106ca7c39cd272dbf21a86eeb3b36b7c26e2e9b94af64292419f7862936bca2ca"))
     }));
     const paymentArgs = RuntimeArgs.fromMap({
-        amount: CLValue.u512("3000000000")
+        amount: CLValue.u512("1000000000")
     });
 
     const payment = DeployUtil.ExecutableDeployItem.newModuleBytes(

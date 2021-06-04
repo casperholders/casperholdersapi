@@ -3,10 +3,8 @@ const {CasperServiceByJsonRPC} = require("casper-client-sdk");
 const {PublicKey} = require("casper-client-sdk");
 const {CasperClient} = require("casper-client-sdk");
 var router = express.Router();
-const client = new CasperClient("http://157.90.149.7:7777/rpc")
-let rpcclient = new CasperServiceByJsonRPC(
-    'http://157.90.149.7:7777/rpc',
-);
+const client = new CasperClient(process.env.CASPER_RPC_URL)
+let rpcclient = new CasperServiceByJsonRPC(process.env.CASPER_RPC_URL);
 /* GET users listing. */
 router.get('/:publicKey', function (req, res, next) {
     try {

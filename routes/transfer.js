@@ -1,48 +1,23 @@
 var express = require('express');
-const {CLValue} = require("casper-client-sdk");
-const {RuntimeArgs} = require("casper-client-sdk");
 const {DeployUtil} = require("casper-client-sdk");
-const {Contracts} = require("casper-client-sdk");
-const {PublicKey} = require("casper-client-sdk");
 const {CasperClient} = require("casper-client-sdk");
 var router = express.Router();
 const client = new CasperClient(process.env.CASPER_RPC_URL)
 /* GET users listing. */
 router.post('/', function (req, res, next) {
     try {
+        DeployUtil.validateDeploy(DeployUtil.deployFromJson(req.body.deploy))
         client.putDeploy(DeployUtil.deployFromJson(req.body.deploy)).then((result) => {
             console.log(result)
             res.send({deploy_hash: result});
-        }).catch(err => res.send(err))
+        }).catch(err => {
+            console.log(err)
+            res.send(err)
+        })
     } catch (err) {
+        console.log(err)
         res.send(err)
     }
-});
-
-router.post('/prepare', function (req,res,next){
-    let delegateContract = new Contracts.Contract(__dirname + "/../contracts/delegate.wasm");
-    console.log(req.body.from);
-    let publicKey = PublicKey.fromHex(req.body.from);
-    const session = DeployUtil.ExecutableDeployItem.newModuleBytes(delegateContract.sessionWasm, RuntimeArgs.fromMap({
-        delegator: CLValue.publicKey(publicKey),
-        amount: CLValue.u512(req.body.amount+"000000000"),
-        validator: CLValue.publicKey(PublicKey.fromHex("0106ca7c39cd272dbf21a86eeb3b36b7c26e2e9b94af64292419f7862936bca2ca"))
-    }));
-    const paymentArgs = RuntimeArgs.fromMap({
-        amount: CLValue.u512("3000000000")
-    });
-
-    const payment = DeployUtil.ExecutableDeployItem.newModuleBytes(
-        delegateContract.paymentWasm,
-        paymentArgs
-    );
-
-    const deploy = DeployUtil.makeDeploy(
-        new DeployUtil.DeployParams(publicKey, "casper-test"),
-        session,
-        payment
-    );
-    res.send(DeployUtil.deployToJson(deploy))
 });
 
 router.get('/result/:deployHash', function (req,res,next){

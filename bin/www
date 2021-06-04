@@ -3,7 +3,9 @@
 /**
  * Module dependencies.
  */
-
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 var app = require('../app');
 var debug = require('debug')('casperholdersapi:server');
 var http = require('http');
