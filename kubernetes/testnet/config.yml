@@ -1,7 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: testnet-casperholders-config
+  name: api-testnet-casperholders-config
 data:
   CASPER_RPC_URL: http://157.90.149.7:7777/rpc
   ORIGIN: https://testnet.casperholders.com
+  PORT: 80
