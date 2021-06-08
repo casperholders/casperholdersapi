@@ -18,12 +18,12 @@ spec:
         name: casperholders-api
     spec:
       containers:
-        envFrom:
-        - configMapRef:
-            name: api-casperholders-config
-        image: killianh/casperholders:api
-        name: casperholders-api
-        ports:
+        - name: casperholders-api
+          image: killianh/casperholders:api
+          ports:
           - containerPort: 80
-        resources: {}
+          envFrom:
+          - configMapRef:
+              name: api-casperholders-config
+          resources: {}
       restartPolicy: Always

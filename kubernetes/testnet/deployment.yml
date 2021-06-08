@@ -18,12 +18,12 @@ spec:
         name: testnet-casperholders-api
     spec:
       containers:
+        - name: testnet-casperholders-api
+          image: killianh/casperholders:testnet-api
+          ports:
+          - containerPort: 80
           envFrom:
           - configMapRef:
               name: api-testnet-casperholders-config
-          image: killianh/casperholders:testnet-api
-          name: testnet-casperholders-api
-          ports:
-            - containerPort: 80
           resources: {}
       restartPolicy: Always
