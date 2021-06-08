@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-casperholders-config
+  namespace: default
+data:
+  CASPER_RPC_URL: http://62.210.123.149:7777/rpc
+  ORIGIN: https://casperholders.com
+  PORT: 80

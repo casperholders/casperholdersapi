@@ -8,5 +8,5 @@ COPY yarn.lock ./
 RUN yarn install
 COPY . .
 
-EXPOSE 8080
+EXPOSE 80
 CMD [ "node", "./bin/www" ]

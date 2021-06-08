@@ -1,0 +1,32 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: api-testnet-casperholders-tls
+spec:
+  entryPoints:
+    - secure
+  routes:
+    - match: Host(`api.testnet.casperholders.com`)
+      kind: Rule
+      services:
+        - name: api-testnet-casperholders-service
+          port: 80
+  tls:
+    secretName: api-testnet-casperholders-cert
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: api-testnet-casperholders-http
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`api.testnet.casperholders.com`)
+      middlewares:
+        - name: https-only
+      kind: Rule
+      services:
+        - name: api-testnet-casperholders-service
+          port: 80
