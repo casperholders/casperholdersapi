@@ -1,14 +1,9 @@
-var express = require('express');
-const {CLValue} = require("casper-client-sdk");
-const {RuntimeArgs} = require("casper-client-sdk");
-const {DeployUtil} = require("casper-client-sdk");
-const {Contracts} = require("casper-client-sdk");
-const {PublicKey} = require("casper-client-sdk");
-const {CasperClient} = require("casper-client-sdk");
-var router = express.Router();
+const express = require('express');
+const {CasperClient, DeployUtil, Contracts, CLPublicKey, RuntimeArgs, CLU512} = require("casper-js-sdk");
+const router = express.Router();
 const client = new CasperClient(process.env.CASPER_RPC_URL)
-/* GET users listing. */
-router.post('/', function (req, res, next) {
+
+router.post('/', function (req, res) {
     try {
         client.putDeploy(DeployUtil.deployFromJson(req.body.deploy)).then((result) => {
             console.log(result)
@@ -19,17 +14,17 @@ router.post('/', function (req, res, next) {
     }
 });
 
-router.post('/prepare', function (req,res,next){
+router.post('/prepare', function (req,res){
     let delegateContract = new Contracts.Contract(__dirname + "/../contracts/delegate.wasm");
     console.log(req.body.from);
-    let publicKey = PublicKey.fromHex(req.body.from);
+    let publicKey = CLPublicKey.fromHex(req.body.from);
     const session = DeployUtil.ExecutableDeployItem.newModuleBytes(delegateContract.sessionWasm, RuntimeArgs.fromMap({
-        delegator: CLValue.publicKey(publicKey),
-        amount: CLValue.u512(req.body.amount+"000000000"),
-        validator: CLValue.publicKey(PublicKey.fromHex("0106ca7c39cd272dbf21a86eeb3b36b7c26e2e9b94af64292419f7862936bca2ca"))
+        delegator: publicKey,
+        amount: new CLU512(req.body.amount+"000000000"),
+        validator: CLPublicKey.fromHex("0106ca7c39cd272dbf21a86eeb3b36b7c26e2e9b94af64292419f7862936bca2ca")
     }));
     const paymentArgs = RuntimeArgs.fromMap({
-        amount: CLValue.u512("3000000000")
+        amount: new CLU512("3000000000")
     });
 
     const payment = DeployUtil.ExecutableDeployItem.newModuleBytes(
@@ -45,29 +40,4 @@ router.post('/prepare', function (req,res,next){
     res.send(DeployUtil.deployToJson(deploy))
 });
 
-router.get('/result/:deployHash', function (req,res,next){
-    client.getDeploy(req.params.deployHash).then((result) => {
-        let deployResult = result[1].execution_results
-        if(deployResult.length > 0){
-            deployResult = deployResult[0].result;
-        }
-        let cost = 0;
-        let status = "Unknown";
-        let message = "";
-        if("Success" in deployResult){
-            cost = deployResult.Success.cost
-            status = true
-        }
-        if("Failure" in deployResult){
-            cost = deployResult.Failure.cost
-            status = false
-            message = deployResult.Failure.error_message
-        }
-        res.send({
-            status: status,
-            cost: cost,
-            message: message
-        });
-    }).catch(err => res.send(err))
-})
 module.exports = router;

@@ -1,14 +1,12 @@
-var express = require('express');
-const {CasperServiceByJsonRPC} = require("casper-client-sdk");
-const {PublicKey} = require("casper-client-sdk");
-const {CasperClient} = require("casper-client-sdk");
-var router = express.Router();
+const express = require('express');
+const {CLPublicKey, CasperClient, CasperServiceByJsonRPC} = require("casper-js-sdk");
+const router = express.Router();
 const client = new CasperClient(process.env.CASPER_RPC_URL)
 let rpcclient = new CasperServiceByJsonRPC(process.env.CASPER_RPC_URL);
-/* GET users listing. */
-router.get('/:publicKey', function (req, res, next) {
+
+router.get('/:publicKey', function (req, res) {
     try {
-        client.balanceOfByPublicKey(PublicKey.fromHex(req.params.publicKey)).then((result) => {
+        client.balanceOfByPublicKey(CLPublicKey.fromHex(req.params.publicKey)).then((result) => {
             res.send({balance: result.toString()});
         }).catch(err => res.send(err))
     } catch (err) {
@@ -16,7 +14,7 @@ router.get('/:publicKey', function (req, res, next) {
     }
 });
 
-router.get('/stake/:publicKey', function (req, res, next) {
+router.get('/stake/:publicKey', function (req, res) {
     try {
         rpcclient.getValidatorsInfo().then(result => {
             let validator = result.auction_state.bids.filter(validator => {
@@ -41,6 +39,5 @@ router.get('/stake/:publicKey', function (req, res, next) {
         res.send(err)
     }
 });
-
 
 module.exports = router;
