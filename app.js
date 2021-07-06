@@ -1,16 +1,17 @@
-var express = require('express');
-var cors = require('cors')
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+let express = require('express');
+let cors = require('cors')
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
 
-var balanceRouter = require('./routes/balance');
-var delegateRouter = require('./routes/delegate');
-var undelegateRouter = require('./routes/undelegate');
-var transferRouter = require('./routes/transfer');
-var deployRouter = require('./routes/deploy');
+let balanceRouter = require('./routes/balance');
+let delegateRouter = require('./routes/delegate');
+let undelegateRouter = require('./routes/undelegate');
+let transferRouter = require('./routes/transfer');
+let deployRouter = require('./routes/deploy');
+let addBidRouter = require('./routes/addBid');
 
-var app = express();
+let app = express();
 
 app.use(cors({
     origin: process.env.ORIGIN,
@@ -27,5 +28,6 @@ app.use('/delegate', delegateRouter);
 app.use('/undelegate', undelegateRouter);
 app.use('/transfer', transferRouter);
 app.use('/deploy', deployRouter);
+app.use('/addbid', addBidRouter);
 
 module.exports = app;

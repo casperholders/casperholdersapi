@@ -27,11 +27,29 @@ router.get('/stake/:publicKey', function (req, res) {
             if (stakingBalance.length > 0) {
                 stakingBalance = stakingBalance[0].staked_amount
                 res.send({balance: stakingBalance})
-            }else{
+            } else {
                 res.send({
                     balance: 0,
                     error: "This account doesn't stake any CSPR on this Validator."
                 })
+            }
+        }).catch(err => res.send(err))
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+});
+
+router.get('/validator/:publicKey', function (req, res) {
+    try {
+        rpcclient.getValidatorsInfo().then(result => {
+            let validator = result.auction_state.bids.filter(validator => {
+                return validator.public_key === req.params.publicKey
+            })[0]
+            if(validator === undefined) {
+                res.sendStatus(404);
+            } else {
+                res.send({balance: validator.bid.staked_amount, commission: validator.bid.delegation_rate});
             }
         }).catch(err => res.send(err))
     } catch (err) {

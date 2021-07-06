@@ -19,7 +19,7 @@ router.post('/prepare', function (req,res,next){
     let publicKey = CLPublicKey.fromHex(req.body.from);
     const session = DeployUtil.ExecutableDeployItem.newModuleBytes(delegateContract.sessionWasm, RuntimeArgs.fromMap({
         delegator: publicKey,
-        amount: new CLU512(req.body.amount+"000000000"),
+        amount: new CLU512(req.body.amount*1000000000),
         validator: CLPublicKey.fromHex("0106ca7c39cd272dbf21a86eeb3b36b7c26e2e9b94af64292419f7862936bca2ca")
     }));
     const paymentArgs = RuntimeArgs.fromMap({
