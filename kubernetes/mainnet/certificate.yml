@@ -6,6 +6,6 @@ spec:
   secretName: api-casperholders-cert
   issuerRef:
     name: letsencrypt-prod
-  commonName: api.casperholders.com
+  commonName: api.casperholders.io
   dnsNames:
-    - api.casperholders.com
+    - api.casperholders.io
