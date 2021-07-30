@@ -6,5 +6,6 @@ resources:
   - service.yml
   - ingress.yml
   - certificate.yml
+  - monitor.yml
 
 namespace: api-testnet-casperholders
