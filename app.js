@@ -4,6 +4,7 @@ let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 let deployRouter = require('./routes/deploy');
+let operationRouter = require('./routes/operation');
 const { register } = require("prom-client");
 
 let app = express();
@@ -17,6 +18,7 @@ app.use(logger('dev'));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.use('/operations', operationRouter);
 app.use('/deploy', deployRouter);
 app.get('/metrics', async (req, res) => {
     try {
