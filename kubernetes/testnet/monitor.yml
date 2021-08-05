@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: testnet-casperholdersmetrics
+  labels:
+    k8s-apps: http
+spec:
+  jobLabel: k8s-app
+  selector:
+    matchExpressions:
+      - {key: k8s-app, operator: Exists}
+  namespaceSelector:
+    matchNames:
+      - api-testnet-casperholders
+  endpoints:
+    - port: http-metrics
+      interval: 15s
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: testnet-casperholders-state-metrics
+    k8s-app: testnet-casperholders-state-metrics
+  annotations:
+    alpha.monitoring.coreos.com/non-namespaced: "true"
+  name: testnet-casperholders-state-metrics
+spec:
+  ports:
+    - name: http-metrics
+      port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app: testnet-casperholders-api

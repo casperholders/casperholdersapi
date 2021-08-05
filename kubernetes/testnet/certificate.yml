@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: api-testnet-casperholders-cert
+spec:
+  secretName: api-testnet-casperholders-cert
+  issuerRef:
+    name: letsencrypt-prod
+  commonName: api.testnet.casperholders.io
+  dnsNames:
+    - api.testnet.casperholders.io

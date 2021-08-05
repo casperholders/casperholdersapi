@@ -1,0 +1,11 @@
+resources:
+  - https.yml
+  - issuer.yml
+  - config.yml
+  - deployment.yml
+  - service.yml
+  - ingress.yml
+  - certificate.yml
+  - monitor.yml
+
+namespace: api-testnet-casperholders
