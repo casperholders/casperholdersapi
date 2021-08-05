@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: api-casperholders-config
 data:
-  CASPER_RPC_URL: http://node.casperholders.com
+  CASPER_RPC_URL: https://node.casperholders.com
   ORIGIN: https://casperholders.io
   PORT: "80"
