@@ -4,5 +4,5 @@ metadata:
   name: api-casperholders-config
 data:
   CASPER_RPC_URL: https://node.casperholders.com
-  ORIGIN: https://casperholders.io
+  ORIGIN: ^https:\/\/(www\.)?casperholders\.io$
   PORT: "80"

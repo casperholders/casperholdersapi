@@ -12,40 +12,49 @@ const operationsCounter = new Counter({
 });
 
 router.get('/result/:deployHash', function (req, res, next) {
-    client.getDeploy(req.params.deployHash).then((result) => {
-        let deployResult = result[1].execution_results
-        const session = result[1].deploy.session
+    if (process.env.ORIGIN.includes("localhost")) {
+        fetch("https://api.testnet.casperholders.io/deploy/result/"+req.params.deployHash).then((response) => {
+            res.send().status(response.status)
+        }).catch((e) => {
+            console.log(e);
+            res.send(e);
+        })
+    } else {
+        client.getDeploy(req.params.deployHash).then((result) => {
+            let deployResult = result[1].execution_results
+            const session = result[1].deploy.session
 
-        let type = "";
+            let type = "";
 
-        if ("Transfer" in session) {
-            type = "transfer"
-        }
+            if ("Transfer" in session) {
+                type = "transfer"
+            }
 
-        if ("StoredContractByHash" in session) {
-            type = result[1].deploy.session.StoredContractByHash.entry_point
-        }
+            if ("StoredContractByHash" in session) {
+                type = result[1].deploy.session.StoredContractByHash.entry_point
+            }
 
-        if ("ModuleBytes" in session) {
-            type = "smart_contract"
-        }
+            if ("ModuleBytes" in session) {
+                type = "smart_contract"
+            }
 
-        if (deployResult.length > 0 && type != null && types.includes(type)) {
-            deployResult = deployResult[0].result;
-            if ("Success" in deployResult) {
-                operationsCounter.inc({type: type})
-                res.send().status(204)
-            } else if ("Failure" in deployResult) {
-                type = type + "_error"
-                operationsCounter.inc({type: type})
-                res.send().status(204)
+            if (deployResult.length > 0 && type != null && types.includes(type)) {
+                deployResult = deployResult[0].result;
+                if ("Success" in deployResult) {
+                    operationsCounter.inc({type: type})
+                    res.send().status(204)
+                } else if ("Failure" in deployResult) {
+                    type = type + "_error"
+                    operationsCounter.inc({type: type})
+                    res.send().status(204)
+                } else {
+                    res.sendStatus(404)
+                }
             } else {
                 res.sendStatus(404)
             }
-        } else {
-            res.sendStatus(404)
-        }
-    }).catch(err => res.send(err))
+        }).catch(err => res.send(err))
+    }
 })
 
 module.exports = router;

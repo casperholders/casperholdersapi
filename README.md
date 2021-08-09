@@ -2,6 +2,12 @@
 
 Simple api to generate prometheus metrics from casper holders operations
 
+## Technical information
+
+The different .env file are here only for example. When you run the project locally it will use the .env file and send / receive metrics from/to the testnet live website. [Link](https://testnet.casperholders.io)
+
+This allow to do some local testing and replicate the full behavior in production.
+
 ## Run locally
 
 ```
