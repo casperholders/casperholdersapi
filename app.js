@@ -10,7 +10,7 @@ const { register } = require("prom-client");
 let app = express();
 
 app.use(cors({
-    origin: process.env.ORIGIN,
+    origin: process.env.ORIGIN.split(","),
     optionsSuccessStatus: 200
 }))
 
