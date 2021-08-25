@@ -20,6 +20,7 @@ router.get('/result/:deployHash', function (req, res, next) {
             res.send(e);
         })
     } else {
+        console.log(req.params.deployHash)
         client.getDeploy(req.params.deployHash).then((result) => {
             let deployResult = result[1].execution_results
             const session = result[1].deploy.session
@@ -37,20 +38,26 @@ router.get('/result/:deployHash', function (req, res, next) {
             if ("ModuleBytes" in session) {
                 type = "smart_contract"
             }
-
+            console.log(type)
+            console.log(JSON.stringify(deployResult))
+            console.log(JSON.stringify(deployResult.length > 0 && type != null && types.includes(type)))
             if (deployResult.length > 0 && type != null && types.includes(type)) {
                 deployResult = deployResult[0].result;
                 if ("Success" in deployResult) {
+                    console.log("success")
                     operationsCounter.inc({type: type})
                     res.send().status(204)
                 } else if ("Failure" in deployResult) {
+                    console.log("error")
                     type = type + "_error"
                     operationsCounter.inc({type: type})
                     res.send().status(204)
                 } else {
+                    console.log("no result")
                     res.sendStatus(404)
                 }
             } else {
+                console.log("false condition")
                 res.sendStatus(404)
             }
         }).catch(err => res.send(err))
