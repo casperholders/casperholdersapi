@@ -6,3 +6,6 @@ data:
   CASPER_RPC_URL: https://node.testnet.casperholders.com
   ORIGIN: https://testnet.casperholders.io
   PORT: "80"
+  OVERRIDE_API_ENDPOINTS: "false"
+  OVERRIDE_API_URL: https://api.testnet.casperholders.io
+  PROMETHEUS_API: http://prometheus-stack-kube-prom-prometheus.monitoring:9090/api/v1
