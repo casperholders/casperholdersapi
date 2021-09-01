@@ -12,8 +12,8 @@ const operationsCounter = new Counter({
 });
 
 router.get('/result/:deployHash', function (req, res, next) {
-    if (process.env.ORIGIN.includes("localhost")) {
-        fetch("https://api.testnet.casperholders.io/deploy/result/" + req.params.deployHash).then((response) => {
+    if (process.env.OVERRIDE_API_ENDPOINTS === "true") {
+        fetch(process.env.OVERRIDE_API_URL+"/deploy/result/" + req.params.deployHash).then((response) => {
             res.send().status(response.status)
         }).catch((e) => {
             console.log(e);

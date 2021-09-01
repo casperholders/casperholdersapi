@@ -3,13 +3,13 @@ const router = express.Router();
 
 router.get('/metrics', function (req, res, next) {
     let url = ""
-    if (process.env.ORIGIN.includes("localhost")) {
-        url = "https://api.testnet.casperholders.io/operations/metrics"
+    if (process.env.OVERRIDE_API_ENDPOINTS === "true") {
+        url = process.env.OVERRIDE_API_URL+"/operations/metrics"
     } else {
         const end = Math.floor(Date.now() / 1000);
         const date = new Date();
         const start = Math.floor(date.getTime() / 1000) - 86400
-        url = `http://prometheus-stack-kube-prom-prometheus.monitoring:9090/api/v1/query_range?query=sum(increase(casperholders_operations[1h]))%20by%20(type,%20namespace)&start=${start}&end=${end}&step=60`;
+        url = process.env.PROMETHEUS_API+`/query_range?query=sum(increase(casperholders_operations[1h]))%20by%20(type,%20namespace)&start=${start}&end=${end}&step=60`;
     }
     fetch(url).then((response) => {
         response.json().then((data) => {
