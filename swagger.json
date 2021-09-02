@@ -1,0 +1,47 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CasperHolders API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/deploy/result/{deployHash}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "deployHash",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "description": "Send deploy hash from CasperHolders Website to be counted in the prometheus counter metric",
+        "responses": {
+          "204": {
+            "description": "Return nothing. The counter is automatically incremented."
+          },
+          "404": {
+            "description": "If the deploy doesn't have a result or isn't a supported type or casper client crash or override api isn't reachable it returns a 404"
+          }
+        }
+      }
+    },
+    "/operations/metrics": {
+      "get": {
+        "description": "Fetch the metrics from your prometheus instance or from the override url provided.",
+        "responses": {
+          "200": {
+            "description": "Return the metrics in the prometheus format"
+          },
+          "404": {
+            "description": "If the override api or the prometheus isn't reachable it returns a 404"
+          }
+        }
+      }
+    }
+  },
+  "components": {},
+  "tags": []
+}
