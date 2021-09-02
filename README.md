@@ -2,6 +2,29 @@
 
 Simple api to generate prometheus metrics from casper holders operations
 
+## Commands of the package.json
+
+### Start the api with the .env file
+```bash
+yarn start
+```
+### Start the api with the .env.testnet file
+```bash
+yarn testnet
+```
+### Start the api with the .env.mainnet file
+```bash
+yarn mainnet
+```
+### Update the swagger.json file
+```bash
+yarn generateSwagger
+```
+### Run the tests
+```bash
+yarn test
+```
+
 ## Technical information
 
 The different .env file are here only for example. When you run the project locally it will use the .env file and send /
