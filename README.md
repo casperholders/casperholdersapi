@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/casperholders/casperholdersapi/branch/main/graph/badge.svg?token=RUYCG6X9RR)](https://codecov.io/gh/casperholders/casperholdersapi)
+
 # CasperHolders API
 
 Simple api to generate prometheus metrics from casper holders operations
