@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "generateSwagger": "node ./swaggerGenerator"
+    "testnet": "node -r dotenv/config ./bin/www dotenv_config_path=.env.testnet",
+    "mainnet": "node -r dotenv/config ./bin/www dotenv_config_path=.env.mainnet",
+    "generateSwagger": "node ./swaggerGenerator",
+    "test": "jest"
   },
   "dependencies": {
     "casper-js-sdk": "^2.4.0",
@@ -18,5 +21,16 @@
     "prom-client": "^13.1.0",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6"
+  },
+  "devDependencies": {
+    "jest": "^27.1.0",
+    "supertest": "^6.1.6"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverage":true,
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }
