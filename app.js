@@ -5,6 +5,7 @@ let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 let deployRouter = require('./routes/deploy');
 let operationRouter = require('./routes/operation');
+let validatorsRouter = require('./routes/valiator');
 const {register} = require("prom-client");
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
@@ -24,6 +25,7 @@ app.use(cookieParser());
 
 app.use('/operations', operationRouter);
 app.use('/deploy', deployRouter);
+app.use('/validators', validatorsRouter);
 app.get('/metrics', async (req, res) => {
     try {
         res.set('Content-Type', register.contentType);

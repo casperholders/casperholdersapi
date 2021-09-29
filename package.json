@@ -10,8 +10,11 @@
     "test": "jest"
   },
   "dependencies": {
+    "@casperholders/core": "^1.5.1",
+    "big.js": "^6.1.1",
     "casper-js-sdk": "^2.4.0",
     "cookie-parser": "~1.4.4",
+    "core-js": "^3.18.1",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^10.0.0",
@@ -19,6 +22,7 @@
     "morgan": "~1.9.1",
     "node-fetch": "^2.6.1",
     "prom-client": "^13.1.0",
+    "regenerator-runtime": "^0.13.9",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6"
   },
@@ -28,7 +32,7 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "collectCoverage":true,
+    "collectCoverage": true,
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ]
