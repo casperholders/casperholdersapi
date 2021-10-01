@@ -32,11 +32,11 @@ let validatorsData = [];
 async function updateValidators() {
   const promises = validatorsData.map(async (validatorInfo) => {
     try {
-      validatorInfo.name = (await validatorsService.getValidatorInfo(
+      const metadata = (await validatorsService.getValidatorInfo(
         validatorInfo.name,
         process.env.ACCOUNT_INFO_HASH, process.env.NETWORK,
-      )).owner.name;
-      console.log(validatorInfo.name);
+      ));
+      validatorInfo.name = metadata.owner?.name ? metadata.owner?.name : validatorInfo.name;
     } catch (e) {
       if (!(e instanceof NoValidatorInfos)) {
         console.log(e);
@@ -44,7 +44,6 @@ async function updateValidators() {
     }
   });
   await Promise.all(promises);
-  console.log('Finished update of validator infos');
 }
 
 /**
@@ -108,10 +107,9 @@ router.get('/accountinfos', async function (req, res, next) {
         delegation_rate: validatorInfo.bid.delegation_rate,
         staked_amount: new Big(stakedAmount).toFixed(2),
       });
+      lastFetch = Math.floor(Date.now() / 1000);
     }
-
-    lastFetch = Math.floor(Date.now() / 1000);
-    updateValidators();
+    await updateValidators();
   }
   res.send(validatorsData);
 });

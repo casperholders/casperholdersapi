@@ -69,10 +69,4 @@ describe('Deploy endpoint', () => {
             .get('/deploy/result/ccf574eaffd9df76f3288f6139acfe8b372a1f3c12662551969c503de065e976')
         expect(res.statusCode).toEqual(204)
     })
-    it('should return 404 to test failover of overrided url', async () => {
-        process.env.OVERRIDE_API_URL = "random string"
-        const res = await request(app)
-            .get('/deploy/result/ccf574eaffd9df76f3288f6139acfe8b372a1f3c12662551969c503de065e976')
-        expect(res.statusCode).toEqual(404)
-    })
 })
