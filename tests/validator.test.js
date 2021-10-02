@@ -1,6 +1,6 @@
 const request = require('supertest');
 const dotenv = require('dotenv');
-dotenv.config({ path: './.env' });
+dotenv.config({ path: './.env.mainnet' });
 const app = require('../app');
 const { updateValidators } = require('../routes/validator');
 
