@@ -4,7 +4,7 @@ dotenv.config({ path: './.env' });
 const app = require('../app');
 const { updateValidators } = require('../routes/validator');
 
-jest.setTimeout(120000);
+jest.setTimeout(200000);
 
 beforeEach(async () => {
   await updateValidators();
