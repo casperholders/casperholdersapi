@@ -334,10 +334,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@casperholders/core@^1.5.1":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.5.1.tgz#e5374b7f53e2326e52b21482228fc07b234b56b5"
-  integrity sha512-WXgqOk/yygYDRzFlsUIjXodZGAnPe9WrTKNDgcxD0x3pj3jYwhQkOgnDHa+3umtlNYQ7PgH2snPsLLHsUFOn9w==
+"@casperholders/core@^1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.6.2.tgz#3c76777ee492e4593090b38fccea8658d0ea5c7a"
+  integrity sha512-hl+JsCwx99hpoJgTbTP0Hka62BiU5WTeWi1Lc3qqVPRTmg9e8mb1+ORl+7sc3ksN+UH+6d/SurNXL15fWlW+9A==
   dependencies:
     big.js "^6.1.1"
     casper-js-sdk "^2.4.0"

@@ -9,17 +9,6 @@ const client = new ClientCasper(process.env.CASPER_RPC_URL);
 const validatorsService = new Validators(client);
 
 /**
- * Cache timeout. 1 hour, if the cache is older than one hour it's invalidated and re-fetch the data from the blockchain.
- * @type {number}
- */
-const CACHE_TIMEOUT = 3600;
-/**
- * Last time we fetched the validators infos
- * @type {number}
- */
-let lastFetch = 0;
-
-/**
  * Validators informations
  * @type {*[]}
  */
@@ -30,21 +19,44 @@ let validatorsData = [];
  * @returns {Promise<void>}
  */
 async function updateValidators() {
-  const promises = validatorsData.map(async (validatorInfo) => {
-    try {
-      const metadata = (await validatorsService.getValidatorInfo(
-        validatorInfo.name,
-        process.env.ACCOUNT_INFO_HASH, process.env.NETWORK,
-      ));
-      validatorInfo.name = metadata.owner?.name ? metadata.owner?.name : validatorInfo.name;
-    } catch (e) {
-      if (!(e instanceof NoValidatorInfos)) {
-        console.log(e);
-      }
-    }
-  });
-  await Promise.all(promises);
+  const validatorsInfo = (await client.casperRPC.getValidatorsInfo()).auction_state.bids;
+  validatorsData = [];
+  for (const validatorInfo of validatorsInfo) {
+    const stakedAmount = CurrencyUtils.convertMotesToCasper(validatorInfo.bid.staked_amount);
+    validatorsData.push({
+      name: validatorInfo.public_key,
+      publicKey: validatorInfo.public_key,
+      group: validatorInfo.bid.inactive ? 'Inactive' : 'Active',
+      delegation_rate: validatorInfo.bid.delegation_rate,
+      staked_amount: new Big(stakedAmount).toFixed(2),
+    });
+  }
+  const firstValidatorInfo = validatorsData[0];
+  if (firstValidatorInfo) {
+    await updateValidator(firstValidatorInfo);
+    await Promise.all(validatorsData.map(updateValidator));
+  }
 }
+
+/**
+ * Update a validator with metadata
+ * @param validatorInfo
+ * @returns {Promise<void>}
+ */
+async function updateValidator(validatorInfo) {
+  try {
+    const metadata = (await validatorsService.getValidatorInfo(
+      validatorInfo.name,
+      process.env.ACCOUNT_INFO_HASH, process.env.NETWORK,
+    ));
+    validatorInfo.name = metadata.owner?.name ? metadata.owner?.name : validatorInfo.name;
+  } catch (e) {
+    if (!(e instanceof NoValidatorInfos)) {
+      console.log(e);
+    }
+  }
+}
+
 
 /**
  * @swagger
@@ -95,23 +107,7 @@ async function updateValidators() {
  *              $ref: '#/definitions/ValidatorsInfos'
  */
 router.get('/accountinfos', async function (req, res, next) {
-  if (lastFetch === 0 || (Math.floor(Date.now() / 1000)) - lastFetch > CACHE_TIMEOUT) {
-    const validatorsInfo = (await client.casperRPC.getValidatorsInfo()).auction_state.bids;
-    validatorsData = [];
-    for (const validatorInfo of validatorsInfo) {
-      const stakedAmount = CurrencyUtils.convertMotesToCasper(validatorInfo.bid.staked_amount);
-      validatorsData.push({
-        name: validatorInfo.public_key,
-        publicKey: validatorInfo.public_key,
-        group: validatorInfo.bid.inactive ? 'Inactive' : 'Active',
-        delegation_rate: validatorInfo.bid.delegation_rate,
-        staked_amount: new Big(stakedAmount).toFixed(2),
-      });
-      lastFetch = Math.floor(Date.now() / 1000);
-    }
-    await updateValidators();
-  }
   res.send(validatorsData);
 });
 
-module.exports = router;
+module.exports = { router, updateValidators };
