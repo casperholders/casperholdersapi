@@ -22,7 +22,17 @@ let lastAPY;
  * @returns {Promise<number>}
  */
 async function updateLastEraInfo() {
-  let block = (await client.casperRPC.getLatestBlockInfo()).block;
+  let block;
+  try {
+    if (process.env.DATA_API) {
+      const lastSwitchBlock = (await (await fetch(process.env.DATA_API + '/blocks?limit=1&order=timestamp.desc&era_end=eq.true')).json())[0].height;
+      block = (await client.casperRPC.getBlockInfoByHeight(lastSwitchBlock)).block;
+    } else {
+      block = (await client.casperRPC.getLatestBlockInfo()).block;
+    }
+  } catch (e) {
+    block = (await client.casperRPC.getLatestBlockInfo()).block;
+  }
   if (lastEra !== block.header.era_id - 1) {
     while (!block.header.era_end) {
       block = (await client.casperRPC.getBlockInfoByHeight(block.header.height - 1)).block;
@@ -35,9 +45,8 @@ async function updateLastEraInfo() {
     const rewards = eraInfo.StoredValue.EraInfo.seigniorageAllocations
       .reduce((total, alloc) => total.plus((alloc.Validator || alloc.Delegator).amount), Big(0));
 
-    lastAPY = rewards.times(12*365).div(totalStake).times(100);
+    lastAPY = rewards.times(12 * 365).div(totalStake).times(100);
   }
-
   return lastAPY;
 }
 

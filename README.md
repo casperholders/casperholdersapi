@@ -64,6 +64,7 @@ ORIGIN=[List of url separated by comma to allow in the CORS Header]
 OVERRIDE_API_ENDPOINTS=[Override the behavior of the api to use the url bellow instead]
 OVERRIDE_API_URL=[Url of an instance of the current api]
 PROMETHEUS_API=[Full url to a prometheus v1 api endpoint]
+DATA_API=[Url of an instance of postgrest in front of your database constructed by the CasperData software. This is optionnal, the software will fallback to a manual discovery instead]
 NODE_ENV=production // Optionnal, will disable the swagger in production
 NETWORK=[Chain network name. Testnet ex : casper-test]
 ACCOUNT_INFO_HASH=[Account info smart contract hash. Testnet ex : 2f36a35edcbaabe17aba805e3fae42699a2bb80c2e0c15189756fdc4895356f8]
