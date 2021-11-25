@@ -52,6 +52,14 @@ Available at http://localhost:3000/api-docs
 |-------------|-------------------------------------------------|
 | Description | Retrieve prometheus metrics to be used in the casper holders website |
 
+| Endpoint    | /apy/current                                    |
+|-------------|-------------------------------------------------|
+| Description | Return the current APY on the network. |
+
+| Endpoint    | /validators/accountinfos                                      |
+|-------------|-------------------------------------------------|
+| Description | Return an array of validator enhanced with data from the account infos smart contract  |
+
 | Endpoint    | /api-docs                                       |
 |-------------|-------------------------------------------------|
 | Description | Swagger ui to test easily the api |
