@@ -39,7 +39,7 @@ const operationsCounter = new Counter({
  */
 router.get('/result/:deployHash', function (req, res, next) {
     if (process.env.OVERRIDE_API_ENDPOINTS === "true") {
-        fetch(process.env.OVERRIDE_API_URL+"/deploy/result/" + req.params.deployHash).then((response) => {
+        fetch(`${process.env.OVERRIDE_API_URL}/deploy/result/${req.params.deployHash}`).then((response) => {
             res.sendStatus(response.status)
         }).catch((e) => {
             console.log(e);

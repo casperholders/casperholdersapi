@@ -9,6 +9,7 @@ if (process.env.NODE_ENV !== 'production') {
 var app = require('../app');
 var debug = require('debug')('casperholdersapi:server');
 var http = require('http');
+const { updateValidators } = require('../routes/validator');
 
 /**
  * Get port from environment and store in Express.
@@ -24,12 +25,22 @@ app.set('port', port);
 var server = http.createServer(app);
 
 /**
+ * Update
+ */
+setInterval(() => {
+  updateValidators();
+},3600000);
+
+/**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+debug('Init validator data');
+updateValidators().then(() => {
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
+});
 
 /**
  * Normalize a port into a number, string, or false.

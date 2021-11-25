@@ -4,9 +4,12 @@ metadata:
   name: api-testnet-casperholders-config
 data:
   CASPER_RPC_URL: https://node.testnet.casperholders.com
-  ORIGIN: https://testnet.casperholders.io
+  ORIGIN: http://localhost:8080,https://testnet.casperholders.io
   PORT: "80"
   OVERRIDE_API_ENDPOINTS: "false"
   OVERRIDE_API_URL: https://api.testnet.casperholders.io
   PROMETHEUS_API: http://prometheus-stack-kube-prom-prometheus.monitoring:9090/api/v1
+  DATA_API: https://data.testnet.casperholders.com
   NODE_ENV: "production"
+  NETWORK: "casper-test"
+  ACCOUNT_INFO_HASH: "2f36a35edcbaabe17aba805e3fae42699a2bb80c2e0c15189756fdc4895356f8"
