@@ -40,18 +40,6 @@ Find the full swagger by launching the api.
 Available at http://localhost:3000/api-docs  
 **If your env variables contains NODE_ENV=production the swagger won't be exposed !**
 
-| Endpoint    | /metrics                                        |
-|-------------|-------------------------------------------------|
-| Description | Default endpoint that expose prometheus metrics. <br> This is a technical endpoint for prometheus. <br> The only use of this endpoint is to be scrapped by prometheus. <br> **Don't use this as a source of truth !**|
-
-| Endpoint    | /deploy/result/{deployHash}                                        |
-|-------------|-------------------------------------------------|
-| Description | Send a deploy hash to be parsed and added to the casper holders metrics |
-
-| Endpoint    | /operations/metrics                                       |
-|-------------|-------------------------------------------------|
-| Description | Retrieve prometheus metrics to be used in the casper holders website |
-
 | Endpoint    | /apy/current                                    |
 |-------------|-------------------------------------------------|
 | Description | Return the current APY on the network. |
