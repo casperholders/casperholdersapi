@@ -22,7 +22,14 @@ async function updateValidators() {
   const validatorsInfo = (await client.casperRPC.getValidatorsInfo()).auction_state.bids;
   validatorsData = [];
   for (const validatorInfo of validatorsInfo) {
-    const stakedAmount = CurrencyUtils.convertMotesToCasper(validatorInfo.bid.staked_amount);
+    let totalStake = '0';
+    if(validatorInfo.bid.delegators.length > 0){
+      totalStake = validatorInfo.bid.delegators.reduce((prev, next) => {
+        return { staked_amount: Big(prev.staked_amount).plus(next.staked_amount).toString()}
+      }).staked_amount
+    }
+    totalStake = Big(totalStake).plus(validatorInfo.bid.staked_amount).toString();
+    const stakedAmount = CurrencyUtils.convertMotesToCasper(totalStake);
     validatorsData.push({
       name: validatorInfo.public_key,
       publicKey: validatorInfo.public_key,
@@ -50,6 +57,9 @@ async function updateValidator(validatorInfo) {
       process.env.ACCOUNT_INFO_HASH, process.env.NETWORK,
     ));
     validatorInfo.name = metadata.owner?.name ? metadata.owner?.name : validatorInfo.name;
+    if(metadata.owner?.branding?.logo?.svg){
+      validatorInfo.logo = metadata.owner?.branding?.logo?.svg
+    }
   } catch (e) {
     if (!(e instanceof NoValidatorInfos)) {
       console.log(e);
