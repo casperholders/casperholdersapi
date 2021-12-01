@@ -3,11 +3,8 @@ let cors = require('cors')
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
-let deployRouter = require('./routes/deploy');
-let operationRouter = require('./routes/operation');
 let validatorsRouter = require('./routes/validator').router;
 let apyRouter = require('./routes/apy');
-const {register} = require("prom-client");
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
@@ -24,19 +21,8 @@ app.use(logger('dev'));
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
-app.use('/operations', operationRouter);
-app.use('/deploy', deployRouter);
 app.use('/validators', validatorsRouter);
 app.use('/apy', apyRouter);
-
-app.get('/metrics', async (req, res) => {
-    try {
-        res.set('Content-Type', register.contentType);
-        res.end(await register.metrics());
-    } catch (ex) {
-        res.status(500).end(ex);
-    }
-});
 
 
 module.exports = app;
