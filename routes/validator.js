@@ -4,6 +4,7 @@ const { CurrencyUtils } = require('@casperholders/core');
 const { Validators } = require('@casperholders/core/dist/services/validators/validators');
 const { ClientCasper } = require('@casperholders/core/dist/services/clients/clientCasper');
 const { NoValidatorInfos } = require('@casperholders/core/dist/services/errors/noValidatorInfos');
+const { orderBy } = require('lodash');
 const router = express.Router();
 const client = new ClientCasper(process.env.CASPER_RPC_URL);
 const validatorsService = new Validators(client);
@@ -21,27 +22,52 @@ let validatorsData = [];
 async function updateValidators() {
   const validatorsInfo = (await client.casperRPC.getValidatorsInfo()).auction_state.bids;
   validatorsData = [];
+
+  const validators = (await client.casperRPC.getValidatorsInfo()).auction_state.era_validators;
+  const currentEra = validators[0].validator_weights.map(v => v.public_key);
+  const nextEra = validators[1].validator_weights.map(v => v.public_key);
   for (const validatorInfo of validatorsInfo) {
     let totalStake = '0';
-    if(validatorInfo.bid.delegators.length > 0){
+    if (validatorInfo.bid.delegators.length > 0) {
       totalStake = validatorInfo.bid.delegators.reduce((prev, next) => {
-        return { staked_amount: Big(prev.staked_amount).plus(next.staked_amount).toString()}
-      }).staked_amount
+        return { staked_amount: Big(prev.staked_amount).plus(next.staked_amount).toString() };
+      }).staked_amount;
     }
     totalStake = Big(totalStake).plus(validatorInfo.bid.staked_amount).toString();
     const stakedAmount = CurrencyUtils.convertMotesToCasper(totalStake);
+
     validatorsData.push({
       name: validatorInfo.public_key,
       publicKey: validatorInfo.public_key,
       group: validatorInfo.bid.inactive ? 'Inactive' : 'Active',
       delegation_rate: validatorInfo.bid.delegation_rate,
       staked_amount: new Big(stakedAmount).toFixed(2),
+      currentEra: currentEra.includes(validatorInfo.public_key),
+      nextEra: nextEra.includes(validatorInfo.public_key),
     });
   }
   const firstValidatorInfo = validatorsData[0];
   if (firstValidatorInfo) {
     await updateValidator(firstValidatorInfo);
     await Promise.all(validatorsData.map(updateValidator));
+    validatorsData = orderBy(
+      validatorsData,
+      [
+        ({ publicKey }) => publicKey.toLowerCase() !== '013725fe8df379be1e1cc8c571fc4d21b584dc8bb126000c7ab70db1ed4fb9d751',
+        ({ logo }) => !logo,
+        ({ name, publicKey }) => name !== publicKey,
+        ({ staked_amount }) => Big(staked_amount).toNumber(),
+        'delegation_rate',
+      ],
+      [
+        'asc',
+        'asc',
+        'asc',
+        'desc',
+        'asc',
+      ],
+    );
+
   }
 }
 
@@ -57,8 +83,12 @@ async function updateValidator(validatorInfo) {
       process.env.ACCOUNT_INFO_HASH, process.env.NETWORK,
     ));
     validatorInfo.name = metadata.owner?.name ? metadata.owner?.name : validatorInfo.name;
-    if(metadata.owner?.branding?.logo?.svg){
-      validatorInfo.logo = metadata.owner?.branding?.logo?.svg
+    if (metadata.owner?.branding?.logo?.svg) {
+      validatorInfo.logo = metadata.owner?.branding?.logo?.svg;
+    } else if (metadata.owner?.branding?.logo?.png_256) {
+      validatorInfo.logo = metadata.owner?.branding?.logo?.png_256;
+    } else if (metadata.owner?.branding?.logo?.png_1024) {
+      validatorInfo.logo = metadata.owner?.branding?.logo?.png_1024;
     }
   } catch (e) {
     if (!(e instanceof NoValidatorInfos)) {
