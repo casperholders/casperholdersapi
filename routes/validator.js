@@ -90,6 +90,11 @@ async function updateValidator(validatorInfo) {
     } else if (metadata.owner?.branding?.logo?.png_1024) {
       validatorInfo.logo = metadata.owner?.branding?.logo?.png_1024;
     }
+    if (metadata.owner?.branding?.logo?.png_256) {
+      validatorInfo.png = metadata.owner?.branding?.logo?.png_256;
+    } else if (metadata.owner?.branding?.logo?.png_1024) {
+      validatorInfo.png = metadata.owner?.branding?.logo?.png_1024;
+    }
   } catch (e) {
     if (!(e instanceof NoValidatorInfos)) {
       console.log(e);
