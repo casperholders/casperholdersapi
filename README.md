@@ -1,4 +1,9 @@
 [![codecov](https://codecov.io/gh/casperholders/casperholdersapi/branch/main/graph/badge.svg?token=RUYCG6X9RR)](https://codecov.io/gh/casperholders/casperholdersapi)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=casperholders_casperholdersapi&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=casperholders_casperholdersapi)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=casperholders_casperholdersapi&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=casperholders_casperholdersapi)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=casperholders_casperholdersapi&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=casperholders_casperholdersapi)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=casperholders_casperholdersapi&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=casperholders_casperholdersapi)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=casperholders_casperholdersapi&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=casperholders_casperholdersapi)
 
 # CasperHolders API
 
