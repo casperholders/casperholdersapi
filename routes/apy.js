@@ -50,7 +50,6 @@ async function updateLastEraInfo() {
   return lastAPY;
 }
 
-
 /**
  * @swagger
  *  definitions:
@@ -60,6 +59,8 @@ async function updateLastEraInfo() {
  *  get:
  *    description: Return current APY
  *    responses:
+ *      '503':
+ *        description: No server available
  *      '200':
  *        description: Current APY
  *        content:
@@ -67,8 +68,13 @@ async function updateLastEraInfo() {
  *            schema:
  *              $ref: '#/definitions/APY'
  */
+
 router.get('/current', async function (req, res, next) {
-  res.send(await updateLastEraInfo());
+  try {
+    res.send(await updateLastEraInfo());
+  } catch (e) {
+    res.sendStatus(503);
+  }
 });
 
 module.exports = router;

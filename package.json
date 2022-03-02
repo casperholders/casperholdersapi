@@ -10,9 +10,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@casperholders/core": "^1.6.2",
+    "@casperholders/core": "^1.17.0",
     "big.js": "^6.1.1",
-    "casper-js-sdk": "^2.4.0",
+    "casper-js-sdk": "^2.8.0",
     "cookie-parser": "~1.4.4",
     "core-js": "^3.18.1",
     "cors": "^2.8.5",

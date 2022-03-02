@@ -5,38 +5,22 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/deploy/result/{deployHash}": {
+    "/apy/current": {
       "get": {
-        "parameters": [
-          {
-            "in": "path",
-            "name": "deployHash",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "description": "Send deploy hash from CasperHolders Website to be counted in the prometheus counter metric",
-        "responses": {
-          "204": {
-            "description": "Return nothing. The counter is automatically incremented."
-          },
-          "404": {
-            "description": "If the deploy doesn't have a result or isn't a supported type or casper client crash or override api isn't reachable it returns a 404"
-          }
-        }
-      }
-    },
-    "/operations/metrics": {
-      "get": {
-        "description": "Fetch the metrics from your prometheus instance or from the override url provided.",
+        "description": "Return current APY",
         "responses": {
           "200": {
-            "description": "Return the metrics in the prometheus format"
+            "description": "Current APY",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/APY"
+                }
+              }
+            }
           },
-          "404": {
-            "description": "If the override api or the prometheus isn't reachable it returns a 404"
+          "503": {
+            "description": "No server available"
           }
         }
       }
@@ -54,12 +38,18 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "No server available"
           }
         }
       }
     }
   },
   "definitions": {
+    "APY": {
+      "type": "number"
+    },
     "ValidatorInfo": {
       "type": "object",
       "required": [

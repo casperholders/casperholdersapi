@@ -144,6 +144,8 @@ async function updateValidator(validatorInfo) {
  *  get:
  *    description: Get validator info from the blockchain auction state. Add additional metadata asynchronously
  *    responses:
+ *      '503':
+ *        description: No server available
  *      '200':
  *        description: Return array of validator infos
  *        content:
@@ -152,7 +154,11 @@ async function updateValidator(validatorInfo) {
  *              $ref: '#/definitions/ValidatorsInfos'
  */
 router.get('/accountinfos', async function (req, res, next) {
-  res.send(validatorsData);
+  if (validatorsData.length === 0) {
+    res.sendStatus(503);
+  } else {
+    res.send(validatorsData);
+  }
 });
 
 module.exports = { router, updateValidators };
