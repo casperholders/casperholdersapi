@@ -23,6 +23,7 @@ spec:
           imagePullPolicy: Always
           ports:
           - containerPort: 80
+          - containerPort: 3001
           envFrom:
           - configMapRef:
               name: api-testnet-casperholders-config
