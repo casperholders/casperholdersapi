@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     hash: {
       type: DataTypes.STRING, allowNull: false, primaryKey: true
     },
-    deploy: DataTypes.JSONB
+    deploy: DataTypes.JSONB,
+    deployResult: DataTypes.JSONB
   }, {
     sequelize,
     tableName: 'deploys',

@@ -11,6 +11,7 @@ async function up({ context: queryInterface }) {
       allowNull: false,
     },
     deploy: Sequelize.JSONB,
+    deployResult: Sequelize.JSONB,
   });
 }
 

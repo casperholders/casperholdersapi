@@ -1,6 +1,6 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const models = require('../models');
+const models = require("../models");
 const { DeployUtil } = require("casper-js-sdk");
 
 /**
@@ -25,12 +25,12 @@ const { DeployUtil } = require("casper-js-sdk");
  *            schema:
  *              $ref: '#/definitions/Deploy'
  */
-router.get('/:hash', async function (req, res, next) {
+router.get("/:hash", async function (req, res, next) {
     const deploy = await models.Deploy.findByPk(req.params.hash);
     if (deploy === null) {
         res.sendStatus(404);
     } else {
-        res.send(deploy.deploy);
+        res.send(deploy);
     }
 });
 
@@ -41,6 +41,9 @@ router.get('/:hash', async function (req, res, next) {
  *        type: object
  *        properties:
  *          deploy:
+ *              type: object
+ *              required: true
+ *          deployResult:
  *              type: object
  *              required: true
  * /deploys/:
@@ -64,18 +67,20 @@ router.get('/:hash', async function (req, res, next) {
  *      '503':
  *        description: Couldn't insert the deploy in the database
  */
-router.post('/', async function (req, res, next) {
+router.post("/", async function (req, res, next) {
     const deploy = DeployUtil.deployFromJson(req.body);
-    if(deploy.ok) {
+
+    if (deploy.ok) {
         try {
             await models.Deploy.create({
                 hash: DeployUtil.deployToJson(deploy.val).deploy.hash,
-                deploy: DeployUtil.deployToJson(deploy.val)
+                deploy: DeployUtil.deployToJson(deploy.val),
+                deployResult: req.body.deployResult,
             });
             res.sendStatus(201);
         } catch (e) {
-            if(e instanceof Error && e.message === "Validation error") {
-                res.status(400).send('Deploy already exist');
+            if (e instanceof Error && e.message === "Validation error") {
+                res.status(400).send("Deploy already exist");
             } else {
                 console.log(e);
                 res.sendStatus(503);
