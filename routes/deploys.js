@@ -79,12 +79,8 @@ router.post("/", async function (req, res, next) {
             });
             res.sendStatus(201);
         } catch (e) {
-            if (e instanceof Error && e.message === "Validation error") {
-                res.status(400).send("Deploy already exist");
-            } else {
-                console.log(e);
-                res.sendStatus(503);
-            }
+            console.log(e);
+            res.sendStatus(503);
         }
     } else {
         console.log(deploy.val);

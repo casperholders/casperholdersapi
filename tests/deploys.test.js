@@ -22,9 +22,6 @@ describe('Deploy endpoint', () => {
     let res = await request(app)
         .post('/deploys/').send(payload);
     expect(res.statusCode).toEqual(201);
-    res = await request(app)
-        .post('/deploys/').send(payload);
-    expect(res.statusCode).toEqual(400);
     payload = {}
     res = await request(app)
         .post('/deploys/').send(payload);
