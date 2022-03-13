@@ -72,7 +72,7 @@ router.post("/", async function (req, res, next) {
 
     if (deploy.ok) {
         try {
-            await models.Deploy.create({
+            await models.Deploy.upsert({
                 hash: DeployUtil.deployToJson(deploy.val).deploy.hash,
                 deploy: DeployUtil.deployToJson(deploy.val),
                 deployResult: req.body.deployResult,
