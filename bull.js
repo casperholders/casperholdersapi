@@ -88,7 +88,7 @@ if(process.env.DISABLE_REDIS !== 'true'){
         {},
         {
             repeat: {
-                cron: "* 0 * * * *",
+                cron: "0 0 * * * *",
             },
             removeOnComplete: {
                 age: 604800,
