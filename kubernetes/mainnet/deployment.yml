@@ -27,3 +27,56 @@ spec:
               name: api-casperholders-config
           resources: {}
       restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: casperholders-api-db
+  name: casperholders-api-db
+spec:
+  selector:
+    matchLabels:
+      app: casperholders-api-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: casperholders-api-db
+        name: casperholders-api-db
+    spec:
+      containers:
+        - name: casperholders-api-db
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: "trust"
+            - name: POSTGRES_DB
+              value: "api"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: casperholders-api-redis
+  name: casperholders-api-redis
+spec:
+  selector:
+    matchLabels:
+      app: casperholders-api-redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: casperholders-api-redis
+        name: casperholders-api-redis
+    spec:
+      containers:
+        - name: casperholders-api-redis
+          image: redis:latest
+          ports:
+            - containerPort: 6379

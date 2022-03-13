@@ -25,6 +25,68 @@
         }
       }
     },
+    "/deploys/{hash}": {
+      "get": {
+        "description": "Return a deploy if present in the database",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "hash",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Hash of the deploy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return a deploy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Deploy"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/deploys/": {
+      "post": {
+        "description": "Return a deploy if present in the database",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "deploy",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/Deploy"
+            },
+            "required": true,
+            "description": "Deploy json object"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Deploy already exist or deploy malformed"
+          },
+          "503": {
+            "description": "Couldn't insert the deploy in the database"
+          }
+        }
+      }
+    },
     "/validators/accountinfos": {
       "get": {
         "description": "Get validator info from the blockchain auction state. Add additional metadata asynchronously",
@@ -49,6 +111,15 @@
   "definitions": {
     "APY": {
       "type": "number"
+    },
+    "Deploy": {
+      "type": "object",
+      "properties": {
+        "deploy": {
+          "type": "object",
+          "required": true
+        }
+      }
     },
     "ValidatorInfo": {
       "type": "object",

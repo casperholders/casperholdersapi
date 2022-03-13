@@ -28,3 +28,56 @@ spec:
               name: api-testnet-casperholders-config
           resources: {}
       restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: casperholders-api-db-testnet
+  name: casperholders-api-db-testnet
+spec:
+  selector:
+    matchLabels:
+      app: casperholders-api-db-testnet
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: casperholders-api-db-testnet
+        name: casperholders-api-db-testnet
+    spec:
+      containers:
+        - name: casperholders-api-db-testnet
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: "trust"
+            - name: POSTGRES_DB
+              value: "api"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: casperholders-api-redis-testnet
+  name: casperholders-api-redis-testnet
+spec:
+  selector:
+    matchLabels:
+      app: casperholders-api-redis-testnet
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: casperholders-api-redis-testnet
+        name: casperholders-api-redis-testnet
+    spec:
+      containers:
+        - name: casperholders-api-redis-testnet
+          image: redis:latest
+          ports:
+            - containerPort: 6379

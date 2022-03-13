@@ -7,9 +7,120 @@
 
 # CasperHolders API
 
-Simple api to generate prometheus metrics from casper holders operations
+Simple api to get the current APY / Validators info & metadata (from the account info standard) / manage multi-sig deploys.
 
-## Commands of the package.json
+## Api endpoints
+
+Find the full swagger by launching the api.  
+The api is available on port :3000 by default.
+The api doc is available at http://localhost:3001/api-docs by default.
+
+| Endpoint    | /apy/current                           |
+|-------------|----------------------------------------|
+| Method      | GET                                    |
+| Description | Return the current APY on the network. |
+
+| Endpoint    | /validators/accountinfos                                      |
+|-------------|-------------------------------------------------|
+| Method      | GET                                    |
+| Description | Return an array of validator enhanced with data from the account infos smart contract  |
+
+| Endpoint    | /deploys/:hash                      |
+|-------------|-------------------------------------|
+| Method      | GET                                    |
+| Description | Return a previously inserted deploy |
+
+| Endpoint    | /deploys/                                                                                                       |
+|-------------|-----------------------------------------------------------------------------------------------------------------|
+| Method      | POST                                                                                                            |
+| Description | Insert a deploy in the database                                                                                 |
+| Body        | Can be obtained by using the DeployUtil.deployToJson method from the casper js sdk. <br/>```{ deploy: {...}}``` |
+
+| Endpoint    | /validators/accountinfos                                      |
+|-------------|-------------------------------------------------|
+| Method      | GET                                    |
+| Description | Return an array of validator enhanced with data from the account infos smart contract  |
+
+## Admin endpoints
+
+The api docs and the bull dashboard are exposed on a different port than the api, by default 3001.  
+Allowing you to choose to expose it or not with network rules.
+
+| Endpoint    | /api-docs                                       |
+|-------------|-------------------------------------------------|
+| Method      | GET                                    |
+| Description | Swagger ui to test easily the api |
+
+
+| Endpoint    | /admin/queues                                                       |
+|-------------|---------------------------------------------------------------------|
+| Method      | GET                                                                 |
+| Description | Bull dashboard. Used to manage the queues & job of the application. |
+
+## Env File explanation
+
+```
+CASPER_RPC_URL=[Full url to node RPC endpoint. Should include :7777/rpc]
+ORIGIN=[List of url separated by comma to allow in the CORS Header]
+OVERRIDE_API_ENDPOINTS=[Override the behavior of the api to use the url bellow instead]
+OVERRIDE_API_URL=[Url of an instance of the current api]
+PROMETHEUS_API=[Full url to a prometheus v1 api endpoint]
+DATA_API=[Url of an instance of postgrest in front of your database constructed by the CasperData software. This is optionnal, the software will fallback to a manual discovery instead]
+NODE_ENV=production // Optionnal, will disable the swagger in production
+NETWORK=[Chain network name. Testnet ex : casper-test]
+ACCOUNT_INFO_HASH=[Account info smart contract hash. Testnet ex : 2f36a35edcbaabe17aba805e3fae42699a2bb80c2e0c15189756fdc4895356f8]
+REDIS_HOST=[Redis hostname. Used for bull queues]
+REDIS_PORT=[Redis port]
+DASHBOARD_PORT=[Bull dashboard & api docs port]
+PORT=[API port]
+DISABLE_REDIS=[Optionnal, if set to true will disable bull / bull dashboard and the queue + job that clean the database periodically]
+```
+
+## Technical information & Database/Redis config
+
+The software works with a postgresql database and Redis. The tests are run with a sqllite in memory database.
+
+We recommend you to use a postgresql database with this software. We won't officially support other types of databases.
+
+Exemple to run a local postgres db :
+
+```bash
+sudo docker run --name some-postgres -p 127.0.0.1:5432:5432 -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=api -d postgres
+```
+
+The different .env file are here only for example. When you run the project locally it will use the .env file and the
+database config file located at `config/config.json`.
+
+View the documentation for sequelize config
+file [here](https://sequelize.org/master/manual/migrations.html#configuration).
+
+If the file is not present the software will try to use the environnement variables to connect to the database with the
+default env key : `DATABASE_URL`.
+
+When you launch the software it will run all migrations automatically.
+
+Exemple to run a local redis instance :
+
+```bash
+sudo docker run --name redis -p 127.0.0.1:6379:6379 -d redis
+```
+
+Redis is used to clean the database every hour with a Bull queue & job.
+This is optional, you can disable this behavior by setting this env variable : `DISABLE_REDIS=true`
+
+## Run locally
+
+### Prerequisites
+
+- Docker or local postgres instance and an optional redis instance too.
+- Node LTS
+- yarn
+
+```bash
+yarn install
+sudo docker run --name some-postgres -p 127.0.0.1:5432:5432 -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=api -d postgres
+sudo docker run --name redis -p 127.0.0.1:6379:6379 -d redis
+```
 
 ### Start the api with the .env file
 ```bash
@@ -30,52 +141,6 @@ yarn generateSwagger
 ### Run the tests
 ```bash
 yarn test
-```
-
-## Technical information
-
-The different .env file are here only for example. When you run the project locally it will use the .env file and send /
-receive metrics from/to the testnet live website. [Link](https://testnet.casperholders.io)
-
-This allow to do some local testing and replicate the full behavior in production.
-
-## Api endpoints
-
-Find the full swagger by launching the api.  
-Available at http://localhost:3000/api-docs  
-**If your env variables contains NODE_ENV=production the swagger won't be exposed !**
-
-| Endpoint    | /apy/current                                    |
-|-------------|-------------------------------------------------|
-| Description | Return the current APY on the network. |
-
-| Endpoint    | /validators/accountinfos                                      |
-|-------------|-------------------------------------------------|
-| Description | Return an array of validator enhanced with data from the account infos smart contract  |
-
-| Endpoint    | /api-docs                                       |
-|-------------|-------------------------------------------------|
-| Description | Swagger ui to test easily the api |
-
-## Env File explanation
-
-```
-CASPER_RPC_URL=[Full url to node RPC endpoint. Should include :7777/rpc]
-ORIGIN=[List of url separated by comma to allow in the CORS Header]
-OVERRIDE_API_ENDPOINTS=[Override the behavior of the api to use the url bellow instead]
-OVERRIDE_API_URL=[Url of an instance of the current api]
-PROMETHEUS_API=[Full url to a prometheus v1 api endpoint]
-DATA_API=[Url of an instance of postgrest in front of your database constructed by the CasperData software. This is optionnal, the software will fallback to a manual discovery instead]
-NODE_ENV=production // Optionnal, will disable the swagger in production
-NETWORK=[Chain network name. Testnet ex : casper-test]
-ACCOUNT_INFO_HASH=[Account info smart contract hash. Testnet ex : 2f36a35edcbaabe17aba805e3fae42699a2bb80c2e0c15189756fdc4895356f8]
-```
-
-## Run locally
-
-```bash
-yarn install
-yarn start
 ```
 
 ## Docker build
