@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@bull-board/express": "^3.10.0",
-    "@casperholders/core": "^1.17.0",
+    "@casperholders/core": "^3.0.0",
     "big.js": "^6.1.1",
     "body-parser": "^1.19.2",
     "bullmq": "^1.76.3",

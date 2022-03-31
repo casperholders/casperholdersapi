@@ -1,6 +1,6 @@
 const express = require('express');
 const { Big } = require('big.js');
-const { ClientCasper } = require('@casperholders/core/dist/services/clients/clientCasper');
+const { ClientCasper } = require('@casperholders/core');
 const router = express.Router();
 const client = new ClientCasper(process.env.CASPER_RPC_URL);
 

@@ -3,6 +3,7 @@
 /**
  * Module dependencies.
  */
+require("regenerator-runtime/runtime");
 if (process.env.NODE_ENV !== "production") {
     require("dotenv").config();
 }

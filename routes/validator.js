@@ -1,10 +1,7 @@
 const express = require('express');
 const { Big } = require('big.js');
-const { CurrencyUtils } = require('@casperholders/core');
-const { Validators } = require('@casperholders/core/dist/services/validators/validators');
-const { ClientCasper } = require('@casperholders/core/dist/services/clients/clientCasper');
-const { NoValidatorInfos } = require('@casperholders/core/dist/services/errors/noValidatorInfos');
 const { orderBy } = require('lodash');
+const { ClientCasper, Validators, CurrencyUtils, NoValidatorInfos } = require('@casperholders/core');
 const router = express.Router();
 const client = new ClientCasper(process.env.CASPER_RPC_URL);
 const validatorsService = new Validators(client);
@@ -44,6 +41,7 @@ async function updateValidators() {
       staked_amount: Big(stakedAmount).toFixed(2),
       currentEra: currentEra.includes(validatorInfo.public_key),
       nextEra: nextEra.includes(validatorInfo.public_key),
+      numberOfDelegators: validatorInfo.bid.delegators.length,
     });
   }
   const firstValidatorInfo = validatorsData[0];
@@ -130,12 +128,16 @@ async function updateValidator(validatorInfo) {
  *          staked_amount:
  *            type: string
  *            description: Number of CSPR staked on the validator
+ *         numberOfDelegators:
+ *            type: int
+ *            description: Number of delegators on the node
  *        example:
  *          name: CasperHolders
  *          group: Active
  *          delegation_rate: 0
  *          publicKey: 0124bfdae2ed128fa5e4057bc398e4933329570e47240e57fc92f5611a6178eba5
  *          staked_amount: "100"
+ *          numberOfDelegators: 1000
  *      ValidatorsInfos:
  *        type: array
  *        items:
