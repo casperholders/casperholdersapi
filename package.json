@@ -46,5 +46,6 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ]
-  }
+  },
+  "packageManager": "yarn@3.2.0"
 }

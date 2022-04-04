@@ -62,3 +62,6 @@ typings/
 
 #idea
 .idea
+.yarn/
+
+.yarnrc.yml
