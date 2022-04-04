@@ -1,7 +1,8 @@
 const express = require('express');
 const { Big } = require('big.js');
 const { orderBy } = require('lodash');
-const { ClientCasper, Validators, CurrencyUtils } = require('@casperholders/core');
+const { ClientCasper, CurrencyUtils } = require('@casperholders/core');
+const { CLPublicKey } = require('casper-js-sdk');
 const router = express.Router();
 const client = new ClientCasper(process.env.CASPER_RPC_URL);
 
@@ -45,8 +46,11 @@ async function updateValidators() {
   }
   const firstValidatorInfo = validatorsData[0];
   if (firstValidatorInfo) {
+    const stateRootHash = await client.casperRPC.getStateRootHash(
+      (await client.casperRPC.getLatestBlockInfo()).block.hash,
+    );
     for (const validatorData of validatorsData) {
-      await updateValidator(validatorData);
+      await updateValidator(validatorData, stateRootHash);
     }
     validatorsData = orderBy(
       validatorsData,
@@ -74,13 +78,32 @@ async function updateValidators() {
  * @param validatorInfo
  * @returns {Promise<void>}
  */
-async function updateValidator(validatorInfo) {
+async function updateValidator(validatorInfo, stateRootHash) {
   try {
-    const validatorService = new Validators(new ClientCasper(process.env.CASPER_RPC_URL));
-    const metadata = (await validatorService.getValidatorInfo(
-      validatorInfo.name,
-      process.env.ACCOUNT_INFO_HASH, process.env.NETWORK,
-    ));
+    const clpublicKey = CLPublicKey.fromHex(validatorInfo.name);
+    const accountHash = clpublicKey.toAccountHashStr()
+      .replace('account-hash-', '');
+    const validatorUrl = (
+      await client.casperRPC.getDictionaryItemByName(
+        stateRootHash,
+        `hash-${process.env.ACCOUNT_INFO_HASH}`,
+        'account-info-urls',
+        accountHash,
+      )
+    ).CLValue.data;
+    const url = `${validatorUrl}/.well-known/casper/account-info.${process.env.NETWORK}.json`;
+
+    const response = await Promise.race([
+      fetch(url),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`timeout fetching ${url}`)), 5000)
+      )
+    ]);
+    if( response instanceof Error) {
+      throw response;
+    }
+    const metadata = await response.json();
+
     validatorInfo.name = metadata.owner?.name ? metadata.owner?.name : validatorInfo.name;
     if (metadata.owner?.branding?.logo?.svg) {
       validatorInfo.logo = metadata.owner?.branding?.logo?.svg;
