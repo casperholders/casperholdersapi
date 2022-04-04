@@ -46,8 +46,9 @@ async function updateValidators() {
   }
   const firstValidatorInfo = validatorsData[0];
   if (firstValidatorInfo) {
-    await updateValidator(firstValidatorInfo);
-    await Promise.all(validatorsData.map(updateValidator));
+    for(const validatorData of validatorsData) {
+      await updateValidator(validatorData);
+    }
     validatorsData = orderBy(
       validatorsData,
       [
@@ -94,9 +95,8 @@ async function updateValidator(validatorInfo) {
       validatorInfo.png = metadata.owner?.branding?.logo?.png_1024;
     }
   } catch (e) {
-    if (!(e instanceof NoValidatorInfos)) {
-      console.log(e);
-    }
+    console.log(`No info for ${validatorInfo.name}`);
+    console.log(e);
   }
 }
 
