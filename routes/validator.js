@@ -1,10 +1,9 @@
 const express = require('express');
 const { Big } = require('big.js');
 const { orderBy } = require('lodash');
-const { ClientCasper, Validators, CurrencyUtils, NoValidatorInfos } = require('@casperholders/core');
+const { ClientCasper, Validators, CurrencyUtils } = require('@casperholders/core');
 const router = express.Router();
 const client = new ClientCasper(process.env.CASPER_RPC_URL);
-const validatorsService = new Validators(client);
 
 /**
  * Validators informations
@@ -46,7 +45,7 @@ async function updateValidators() {
   }
   const firstValidatorInfo = validatorsData[0];
   if (firstValidatorInfo) {
-    for(const validatorData of validatorsData) {
+    for (const validatorData of validatorsData) {
       await updateValidator(validatorData);
     }
     validatorsData = orderBy(
@@ -77,7 +76,8 @@ async function updateValidators() {
  */
 async function updateValidator(validatorInfo) {
   try {
-    const metadata = (await validatorsService.getValidatorInfo(
+    const validatorService = new Validators(new ClientCasper(process.env.CASPER_RPC_URL));
+    const metadata = (await validatorService.getValidatorInfo(
       validatorInfo.name,
       process.env.ACCOUNT_INFO_HASH, process.env.NETWORK,
     ));
@@ -99,7 +99,6 @@ async function updateValidator(validatorInfo) {
     console.log(e);
   }
 }
-
 
 /**
  * @swagger
@@ -155,7 +154,7 @@ async function updateValidator(validatorInfo) {
  *            schema:
  *              $ref: '#/definitions/ValidatorsInfos'
  */
-router.get('/accountinfos', async function (req, res, next) {
+router.get('/accountinfos', async function(req, res, next) {
   if (validatorsData.length === 0) {
     res.sendStatus(503);
   } else {
