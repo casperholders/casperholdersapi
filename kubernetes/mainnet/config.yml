@@ -10,3 +10,5 @@ data:
   NODE_ENV: "production"
   NETWORK: "casper"
   ACCOUNT_INFO_HASH: "fb8e0215c040691e9bbe945dd22a00989b532b9c2521582538edb95b61156698"
+  DATABASE_URL: "postgres://postgres@casperholders-api-db-service:5432/api"
+  REDIS_HOST: "casperholders-api-redis-service"

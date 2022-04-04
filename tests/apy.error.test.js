@@ -1,3 +1,4 @@
+require("regenerator-runtime/runtime");
 const request = require('supertest');
 const dotenv = require('dotenv');
 dotenv.config({ path: './.env.error' });

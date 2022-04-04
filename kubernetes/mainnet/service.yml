@@ -11,3 +11,29 @@ spec:
     app: casperholders-api
 status:
   loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: casperholders-api-db-service
+spec:
+  ports:
+    - name: casperholders-api-db-service
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+  selector:
+    app: casperholders-api-db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: casperholders-api-redis-service
+spec:
+  ports:
+    - name: casperholders-api-redis-service
+      protocol: TCP
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: casperholders-api-redis
