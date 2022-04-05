@@ -472,15 +472,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@casperholders/core@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@casperholders/core@npm:3.0.0"
+"@casperholders/core@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@casperholders/core@npm:3.0.1"
   dependencies:
     "@ethersproject/bignumber": ^5.5.0
     big.js: ^6.1.1
-    casper-js-sdk: ^2.8.0
+    casper-js-sdk: ^2.9.1
     ts-results: ^3.3.0
-  checksum: 8b5fe86c8e5a04666ac291f32c1fe92854b9d7da2d36e3044c79159e2ade8bd0e064969496e031e7d1a9cc2f677f879c5b0e2e2cce5fe9d13fc0379cb90909b6
+  checksum: 49957d4c574b310d49f02bcf586340facbb2aeeffd7b1d11a6bdfd0129ffd987c51d3b37ce4c7d7009c127f153c1b82150d7141013530a8b7d0ffc05c95de2b1
   languageName: node
   linkType: hard
 
@@ -1994,7 +1994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"casper-js-sdk@npm:^2.8.0":
+"casper-js-sdk@npm:^2.9.1":
   version: 2.9.1
   resolution: "casper-js-sdk@npm:2.9.1"
   dependencies:
@@ -2026,11 +2026,11 @@ __metadata:
   resolution: "casperholdersapi@workspace:."
   dependencies:
     "@bull-board/express": ^3.10.0
-    "@casperholders/core": ^3.0.0
+    "@casperholders/core": ^3.0.1
     big.js: ^6.1.1
     body-parser: ^1.19.2
     bullmq: ^1.76.3
-    casper-js-sdk: ^2.8.0
+    casper-js-sdk: ^2.9.1
     cookie-parser: ~1.4.4
     core-js: ^3.18.1
     cors: ^2.8.5
