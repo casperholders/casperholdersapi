@@ -4,7 +4,7 @@ metadata:
   name: api-testnet-casperholders-config
 data:
   CASPER_RPC_URL: https://node.testnet.casperholders.com
-  ORIGIN: http://localhost:8080,https://testnet.casperholders.io
+  ORIGIN: http://localhost:8080,https://testnet.casperholders.io,https://dive.casper.dev
   PORT: "80"
   DATA_API: https://data.testnet.casperholders.com
   NODE_ENV: "production"

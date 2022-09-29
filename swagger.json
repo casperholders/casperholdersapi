@@ -106,6 +106,40 @@
           }
         }
       }
+    },
+    "/validators/accountinfos/{publicKey}": {
+      "get": {
+        "description": "Get validator info from the blockchain auction state. Add additional metadata asynchronously",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "publicKey",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "publicKey of the validator"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return validator infos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/ValidatorInfo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "503": {
+            "description": "No server available"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -116,6 +150,10 @@
       "type": "object",
       "properties": {
         "deploy": {
+          "type": "object",
+          "required": true
+        },
+        "deployResult": {
           "type": "object",
           "required": true
         }
@@ -150,6 +188,10 @@
         "staked_amount": {
           "type": "string",
           "description": "Number of CSPR staked on the validator"
+        },
+        "numberOfDelegators": {
+          "type": "int",
+          "description": "Number of delegators on the node"
         }
       },
       "example": {
@@ -157,7 +199,8 @@
         "group": "Active",
         "delegation_rate": 0,
         "publicKey": "0124bfdae2ed128fa5e4057bc398e4933329570e47240e57fc92f5611a6178eba5",
-        "staked_amount": "100"
+        "staked_amount": "100",
+        "numberOfDelegators": 1000
       }
     },
     "ValidatorsInfos": {

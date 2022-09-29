@@ -150,7 +150,7 @@ async function updateValidator(validatorInfo, stateRootHash) {
  *          staked_amount:
  *            type: string
  *            description: Number of CSPR staked on the validator
- *         numberOfDelegators:
+ *          numberOfDelegators:
  *            type: int
  *            description: Number of delegators on the node
  *        example:
@@ -182,6 +182,80 @@ router.get('/accountinfos', async function(req, res, next) {
     res.sendStatus(503);
   } else {
     res.send(validatorsData);
+  }
+});
+
+/**
+ * @swagger
+ * definitions:
+ *      ValidatorInfo:
+ *        type: object
+ *        required:
+ *          - name
+ *          - group
+ *          - delegation_rate
+ *          - publicKey
+ *          - staked_amount
+ *        properties:
+ *          name:
+ *            type: string
+ *            description: Name or public key of the validator
+ *          group:
+ *            type: string
+ *            description: Group of the validator Active or Inactive
+ *          delegation_rate:
+ *            type: int
+ *            description: Delegation rate of the validator
+ *          publicKey:
+ *            type: boolean
+ *            description: Public key of the validator
+ *          staked_amount:
+ *            type: string
+ *            description: Number of CSPR staked on the validator
+ *          numberOfDelegators:
+ *            type: int
+ *            description: Number of delegators on the node
+ *        example:
+ *          name: CasperHolders
+ *          group: Active
+ *          delegation_rate: 0
+ *          publicKey: 0124bfdae2ed128fa5e4057bc398e4933329570e47240e57fc92f5611a6178eba5
+ *          staked_amount: "100"
+ *          numberOfDelegators: 1000
+ * /validators/accountinfos/{publicKey}:
+ *  get:
+ *    description: Get validator info from the blockchain auction state. Add additional metadata asynchronously
+ *    parameters:
+ *      - in: path
+ *        name: publicKey
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: publicKey of the validator
+ *    responses:
+ *      '503':
+ *        description: No server available
+ *      '404':
+ *        description: Not found
+ *      '200':
+ *        description: Return validator infos
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/definitions/ValidatorInfo'
+ */
+router.get('/accountinfos/:hash', async function(req, res, next) {
+  if (validatorsData.length === 0) {
+    res.sendStatus(503);
+  } else {
+    console.log(req.params.hash);
+    const v = validatorsData.filter((i) => i.publicKey === req.params.hash);
+    console.log(v);
+    if (v.length === 0) {
+      res.sendStatus(404);
+    } else {
+      res.send(v[0]);
+    }
   }
 });
 
