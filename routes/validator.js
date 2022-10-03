@@ -117,6 +117,7 @@ async function updateValidator(validatorInfo, stateRootHash) {
     } else if (metadata.owner?.branding?.logo?.png_1024) {
       validatorInfo.png = metadata.owner?.branding?.logo?.png_1024;
     }
+    validatorInfo.metadata = metadata;
   } catch (e) {
     console.log(`No info for ${validatorInfo.name}`);
     console.log(e);
