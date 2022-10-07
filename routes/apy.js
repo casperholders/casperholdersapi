@@ -16,7 +16,6 @@ let lastEra;
  */
 let lastAPY;
 
-
 /**
  * Update the validatorsData object with the account info metadata from the blockchain.
  * @returns {Promise<number>}
@@ -69,9 +68,38 @@ async function updateLastEraInfo() {
  *              $ref: '#/definitions/APY'
  */
 
-router.get('/current', async function (req, res, next) {
+router.get('/current', async function(req, res, next) {
   try {
     res.send(await updateLastEraInfo());
+  } catch (e) {
+    res.sendStatus(503);
+  }
+});
+
+router.get('/supply', async function(req, res, next) {
+  try {
+    const cclient = new ClientCasper(process.env.CASPER_RPC_URL);
+    const stateRootHash = await cclient.casperRPC.getStateRootHash();
+    const testnetUref = 'uref-5d7b1b23197cda53dec593caf30836a5740afa2279b356fae74bf1bdc2b2e725-007';
+    const mainnetUref = 'uref-8032100a1dcc56acf84d5fc9c968ce8caa5f2835ed665a2ae2186141e9946214-007';
+    const uref = process.env.NETWORK === 'casper' ? mainnetUref : testnetUref;
+    const supply = await fetch(process.env.CASPER_RPC_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        'jsonrpc': '2.0',
+        'id': 1,
+        'method': 'state_get_item',
+        'params': [
+          stateRootHash,
+          uref
+        ],
+      }),
+    });
+    const totalSupply = (await supply.json()).result.stored_value.CLValue.parsed;
+    res.send(totalSupply);
   } catch (e) {
     res.sendStatus(503);
   }
