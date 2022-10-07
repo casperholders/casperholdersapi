@@ -73,6 +73,32 @@ async function updateValidators() {
   }
 }
 
+async function getAccountInfoData(publicKey, stateRootHash) {
+  const clpublicKey = CLPublicKey.fromHex(publicKey);
+  const accountHash = clpublicKey.toAccountHashStr()
+    .replace('account-hash-', '');
+  const accountInfoUrl = (
+    await client.casperRPC.getDictionaryItemByName(
+      stateRootHash,
+      `hash-${process.env.ACCOUNT_INFO_HASH}`,
+      'account-info-urls',
+      accountHash,
+    )
+  ).CLValue.data;
+  const url = `${accountInfoUrl}/.well-known/casper/account-info.${process.env.NETWORK}.json`;
+
+  const response = await Promise.race([
+    fetch(url),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`timeout fetching ${url}`)), 5000),
+    ),
+  ]);
+  if (response instanceof Error) {
+    throw response;
+  }
+  return await response.json();
+}
+
 /**
  * Update a validator with metadata
  * @param validatorInfo
@@ -80,29 +106,7 @@ async function updateValidators() {
  */
 async function updateValidator(validatorInfo, stateRootHash) {
   try {
-    const clpublicKey = CLPublicKey.fromHex(validatorInfo.name);
-    const accountHash = clpublicKey.toAccountHashStr()
-      .replace('account-hash-', '');
-    const validatorUrl = (
-      await client.casperRPC.getDictionaryItemByName(
-        stateRootHash,
-        `hash-${process.env.ACCOUNT_INFO_HASH}`,
-        'account-info-urls',
-        accountHash,
-      )
-    ).CLValue.data;
-    const url = `${validatorUrl}/.well-known/casper/account-info.${process.env.NETWORK}.json`;
-
-    const response = await Promise.race([
-      fetch(url),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`timeout fetching ${url}`)), 5000)
-      )
-    ]);
-    if( response instanceof Error) {
-      throw response;
-    }
-    const metadata = await response.json();
+    const metadata = await getAccountInfoData(validatorInfo.name, stateRootHash);
 
     validatorInfo.name = metadata.owner?.name ? metadata.owner?.name : validatorInfo.name;
     if (metadata.owner?.branding?.logo?.svg) {
@@ -249,14 +253,23 @@ router.get('/accountinfos/:hash', async function(req, res, next) {
   if (validatorsData.length === 0) {
     res.sendStatus(503);
   } else {
-    console.log(req.params.hash);
     const v = validatorsData.filter((i) => i.publicKey === req.params.hash);
-    console.log(v);
     if (v.length === 0) {
       res.sendStatus(404);
     } else {
       res.send(v[0]);
     }
+  }
+});
+
+router.get('/metadata/:hash', async function(req, res, next) {
+  try {
+    const stateRootHash = await client.casperRPC.getStateRootHash(
+      (await client.casperRPC.getLatestBlockInfo()).block.hash,
+    );
+    res.send(await getAccountInfoData(req.params.hash,stateRootHash))
+  } catch (e) {
+    res.sendStatus(404);
   }
 });
 
