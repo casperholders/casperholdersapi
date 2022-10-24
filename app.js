@@ -5,7 +5,7 @@ let cookieParser = require("cookie-parser");
 let bodyParser = require("body-parser");
 let logger = require("morgan");
 let validatorsRouter = require("./routes/validator").router;
-let apyRouter = require("./routes/apy");
+let apyRouter = require("./routes/apy").router;
 let deploysRouter = require("./routes/deploys");
 
 let app = express();

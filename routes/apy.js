@@ -76,12 +76,11 @@ async function getSupply() {
  */
 
 router.get('/current', async function(req, res, next) {
-  try {
-    getAPY();
+  getAPY();
+  if (apy !== undefined){
     res.send(apy);
-  } catch (e) {
-    console.log(e);
-    res.sendStatus(503);
+  } else {
+    res.sendStatus(503)
   }
 });
 
@@ -93,4 +92,4 @@ router.get('/supply', async function(req, res, next) {
   }
 });
 
-module.exports = router;
+module.exports = { router, getAPY };
