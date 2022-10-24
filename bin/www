@@ -29,8 +29,11 @@ var server = http.createServer(app);
  * Update
  */
 setInterval(() => {
-    updateValidators();
+    updateValidators(true);
 }, 3600000);
+setInterval(() => {
+    updateValidators();
+}, 600000);
 
 /**
  * Listen on provided port, on all network interfaces.

@@ -8,21 +8,34 @@ const client = new ClientCasper(process.env.CASPER_RPC_URL);
 
 /**
  * Validators informations
- * @type {*[]}
+ * @type {Map<any, any>}
  */
-let validatorsData = [];
+let validatorsData = new Map();
+let sortedValidatorData = [];
+let lastKnownAccountInfoDeploy;
 
 /**
  * Update the validatorsData object with the account info metadata from the blockchain.
  * @returns {Promise<void>}
  */
-async function updateValidators() {
+async function updateValidators(force = false) {
+  const contractHashes = (await (await fetch(`${process.env.DATA_API}/contracts?select=hash&package=eq.${process.env.ACCOUNT_INFO_PACKAGE}`)).json()).map((c) => c.hash);
+  const lastAccountInfoDeploy = (await (await fetch(`${process.env.DATA_API}/deploys?select=timestamp&limit=1&contract_hash=in.(${contractHashes.join(',')})`)).json())[0].timestamp;
+  let refreshAccountInfo = false;
+  if (lastAccountInfoDeploy !== lastKnownAccountInfoDeploy) {
+    refreshAccountInfo = true;
+    lastKnownAccountInfoDeploy = lastAccountInfoDeploy;
+  } else {
+    console.log('No refresh account info');
+  }
   const validatorsInfo = (await client.casperRPC.getValidatorsInfo()).auction_state.bids;
-  validatorsData = [];
-
+  const stateRootHash = await client.casperRPC.getStateRootHash(
+    (await client.casperRPC.getLatestBlockInfo()).block.hash,
+  );
   const validators = (await client.casperRPC.getValidatorsInfo()).auction_state.era_validators;
   const currentEra = validators[0].validator_weights.map(v => v.public_key);
   const nextEra = validators[1].validator_weights.map(v => v.public_key);
+  const accountInfoPromises = [];
   for (const validatorInfo of validatorsInfo) {
     let totalStake = '0';
     if (validatorInfo.bid.delegators.length > 0) {
@@ -32,45 +45,48 @@ async function updateValidators() {
     }
     totalStake = Big(totalStake).plus(validatorInfo.bid.staked_amount).toString();
     const stakedAmount = CurrencyUtils.convertMotesToCasper(totalStake);
-
-    validatorsData.push({
-      name: validatorInfo.public_key,
-      publicKey: validatorInfo.public_key,
-      group: validatorInfo.bid.inactive ? 'Inactive' : 'Active',
-      delegation_rate: validatorInfo.bid.delegation_rate,
-      staked_amount: Big(stakedAmount).toFixed(2),
-      currentEra: currentEra.includes(validatorInfo.public_key),
-      nextEra: nextEra.includes(validatorInfo.public_key),
-      numberOfDelegators: validatorInfo.bid.delegators.length,
-    });
-  }
-  const firstValidatorInfo = validatorsData[0];
-  if (firstValidatorInfo) {
-    const stateRootHash = await client.casperRPC.getStateRootHash(
-      (await client.casperRPC.getLatestBlockInfo()).block.hash,
-    );
-    for (const validatorData of validatorsData) {
-      await updateValidator(validatorData, stateRootHash);
+    let previousValidatorData = validatorsData.get(validatorInfo.public_key);
+    if (previousValidatorData === undefined || force || refreshAccountInfo) {
+      previousValidatorData = {
+        name: validatorInfo.public_key,
+        publicKey: validatorInfo.public_key,
+        group: validatorInfo.bid.inactive ? 'Inactive' : 'Active',
+        delegation_rate: validatorInfo.bid.delegation_rate,
+        staked_amount: Big(stakedAmount).toFixed(2),
+        currentEra: currentEra.includes(validatorInfo.public_key),
+        nextEra: nextEra.includes(validatorInfo.public_key),
+        numberOfDelegators: validatorInfo.bid.delegators.length,
+      };
+      accountInfoPromises.push(updateValidator(previousValidatorData, stateRootHash).then((r) => validatorsData.set(validatorInfo.public_key, r)));
+    } else {
+      previousValidatorData.publicKey = validatorInfo.public_key;
+      previousValidatorData.group = validatorInfo.bid.inactive ? 'Inactive' : 'Active';
+      previousValidatorData.delegation_rate = validatorInfo.bid.delegation_rate;
+      previousValidatorData.staked_amount = Big(stakedAmount).toFixed(2);
+      previousValidatorData.currentEra = currentEra.includes(validatorInfo.public_key);
+      previousValidatorData.nextEra = nextEra.includes(validatorInfo.public_key);
+      previousValidatorData.numberOfDelegators = validatorInfo.bid.delegators.length;
+      validatorsData.set(validatorInfo.public_key, previousValidatorData);
     }
-    validatorsData = orderBy(
-      validatorsData,
-      [
-        ({ publicKey }) => publicKey.toLowerCase() !== '013725fe8df379be1e1cc8c571fc4d21b584dc8bb126000c7ab70db1ed4fb9d751',
-        ({ logo }) => !logo,
-        ({ name, publicKey }) => name !== publicKey,
-        ({ staked_amount }) => Big(staked_amount).toNumber(),
-        'delegation_rate',
-      ],
-      [
-        'asc',
-        'asc',
-        'asc',
-        'desc',
-        'asc',
-      ],
-    );
-
   }
+  await Promise.all(accountInfoPromises);
+  sortedValidatorData = orderBy(
+    Array.from(validatorsData.values()),
+    [
+      ({ publicKey }) => publicKey.toLowerCase() !== '013725fe8df379be1e1cc8c571fc4d21b584dc8bb126000c7ab70db1ed4fb9d751',
+      ({ logo }) => !logo,
+      ({ name, publicKey }) => name !== publicKey,
+      ({ staked_amount }) => Big(staked_amount).toNumber(),
+      'delegation_rate',
+    ],
+    [
+      'asc',
+      'asc',
+      'asc',
+      'desc',
+      'asc',
+    ],
+  );
 }
 
 async function getAccountInfoData(publicKey, stateRootHash) {
@@ -124,8 +140,8 @@ async function updateValidator(validatorInfo, stateRootHash) {
     validatorInfo.metadata = metadata;
   } catch (e) {
     console.log(`No info for ${validatorInfo.name}`);
-    console.log(e);
   }
+  return validatorInfo;
 }
 
 /**
@@ -183,10 +199,10 @@ async function updateValidator(validatorInfo, stateRootHash) {
  *              $ref: '#/definitions/ValidatorsInfos'
  */
 router.get('/accountinfos', async function(req, res, next) {
-  if (validatorsData.length === 0) {
+  if (sortedValidatorData.length === 0) {
     res.sendStatus(503);
   } else {
-    res.send(validatorsData);
+    res.send(sortedValidatorData);
   }
 });
 
@@ -250,10 +266,10 @@ router.get('/accountinfos', async function(req, res, next) {
  *              $ref: '#/definitions/ValidatorInfo'
  */
 router.get('/accountinfos/:hash', async function(req, res, next) {
-  if (validatorsData.length === 0) {
+  if (sortedValidatorData.length === 0) {
     res.sendStatus(503);
   } else {
-    const v = validatorsData.filter((i) => i.publicKey === req.params.hash);
+    const v = sortedValidatorData.filter((i) => i.publicKey === req.params.hash);
     if (v.length === 0) {
       res.sendStatus(404);
     } else {
@@ -267,7 +283,7 @@ router.get('/metadata/:hash', async function(req, res, next) {
     const stateRootHash = await client.casperRPC.getStateRootHash(
       (await client.casperRPC.getLatestBlockInfo()).block.hash,
     );
-    res.send(await getAccountInfoData(req.params.hash,stateRootHash))
+    res.send(await getAccountInfoData(req.params.hash, stateRootHash));
   } catch (e) {
     res.sendStatus(404);
   }
