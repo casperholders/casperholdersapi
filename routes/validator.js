@@ -106,7 +106,7 @@ async function getAccountInfoData(publicKey, stateRootHash) {
   const response = await Promise.race([
     fetch(url),
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error(`timeout fetching ${url}`)), 5000),
+      setTimeout(() => reject(new Error(`timeout fetching ${url}`)), 60000),
     ),
   ]);
   if (response instanceof Error) {
@@ -138,7 +138,11 @@ async function updateValidator(validatorInfo, stateRootHash) {
       validatorInfo.png = metadata.owner?.branding?.logo?.png_1024;
     }
     validatorInfo.metadata = metadata;
+    console.log(`Info for ${validatorInfo.name}`);
   } catch (e) {
+    if (validatorInfo.name === '0124bfdae2ed128fa5e4057bc398e4933329570e47240e57fc92f5611a6178eba5') {
+      console.log(e);
+    }
     console.log(`No info for ${validatorInfo.name}`);
   }
   return validatorInfo;
