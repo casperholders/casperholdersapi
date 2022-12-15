@@ -38,7 +38,7 @@ async function getSupply() {
   const testnetUref = 'uref-5d7b1b23197cda53dec593caf30836a5740afa2279b356fae74bf1bdc2b2e725-007';
   const mainnetUref = 'uref-8032100a1dcc56acf84d5fc9c968ce8caa5f2835ed665a2ae2186141e9946214-007';
   const uref = process.env.NETWORK === 'casper' ? mainnetUref : testnetUref;
-  const supply = await fetch(process.env.CASPER_RPC_URL, {
+  const supply = await (await fetch(process.env.CASPER_RPC_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -52,8 +52,8 @@ async function getSupply() {
         uref
       ],
     }),
-  });
-  return (await supply.json()).result.stored_value.CLValue.parsed;
+  })).json();
+  return supply.result.stored_value.CLValue.parsed;
 }
 
 /**
