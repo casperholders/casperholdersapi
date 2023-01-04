@@ -38,8 +38,24 @@ setInterval(() => {
 /**
  * Listen on provided port, on all network interfaces.
  */
+const delay = async (ms) => new Promise(res => setTimeout(res, ms));
+async function wrappedRetryUpdateValidators() {
+    let count = 0;
+    let maxTries = 12;
+    while(true) {
+        try {
+            await updateValidators();
+            break;
+        } catch (e) {
+            console.log("Failed to load validator data" + count+1);
+            console.error(e);
+            await delay(10000);
+            if (++count === maxTries) throw e;
+        }
+    }
+}
 
-updateValidators().then(() => {
+wrappedRetryUpdateValidators().then(() => {
     console.log("Validator data loaded");
 }).catch((e) => {
     console.log("Failed to load validator data");
