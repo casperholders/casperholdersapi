@@ -4,7 +4,7 @@ metadata:
   name: api-casperholders-config
 data:
   CASPER_RPC_URL: https://node.casperholders.com
-  ORIGIN: https://casperholders.io,https://www.casperholders.io,https://dive.casper.dev
+  ORIGIN: https://casperholders.io,https://www.casperholders.io,https://dive.casper.dev,https://div3.casper.dev,https://explore.div3.app,https://div3.in
   PORT: "80"
   DATA_API: https://data.test.casperholders.com
   NODE_ENV: "production"

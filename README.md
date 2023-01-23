@@ -20,14 +20,14 @@ The api doc is available at http://localhost:3001/api-docs by default.
 | Method      | GET                                    |
 | Description | Return the current APY on the network. |
 
-| Endpoint    | /validators/accountinfos                                      |
-|-------------|-------------------------------------------------|
-| Method      | GET                                    |
-| Description | Return an array of validator enhanced with data from the account infos smart contract  |
+| Endpoint    | /validators/accountinfos                                                              |
+|-------------|---------------------------------------------------------------------------------------|
+| Method      | GET                                                                                   |
+| Description | Return an array of validator enhanced with data from the account infos smart contract |
 
 | Endpoint    | /deploys/:hash                      |
 |-------------|-------------------------------------|
-| Method      | GET                                    |
+| Method      | GET                                 |
 | Description | Return a previously inserted deploy |
 
 | Endpoint    | /deploys/                                                                                                       |
@@ -36,19 +36,19 @@ The api doc is available at http://localhost:3001/api-docs by default.
 | Description | Insert a deploy in the database                                                                                 |
 | Body        | Can be obtained by using the DeployUtil.deployToJson method from the casper js sdk. <br/>```{ deploy: {...}}``` |
 
-| Endpoint    | /validators/accountinfos                                      |
-|-------------|-------------------------------------------------|
-| Method      | GET                                    |
-| Description | Return an array of validator enhanced with data from the account infos smart contract  |
+| Endpoint    | /validators/accountinfos                                                              |
+|-------------|---------------------------------------------------------------------------------------|
+| Method      | GET                                                                                   |
+| Description | Return an array of validator enhanced with data from the account infos smart contract |
 
 ## Admin endpoints
 
 The api docs and the bull dashboard are exposed on a different port than the api, by default 3001.  
 Allowing you to choose to expose it or not with network rules.
 
-| Endpoint    | /api-docs                                       |
-|-------------|-------------------------------------------------|
-| Method      | GET                                    |
+| Endpoint    | /api-docs                         |
+|-------------|-----------------------------------|
+| Method      | GET                               |
 | Description | Swagger ui to test easily the api |
 
 
