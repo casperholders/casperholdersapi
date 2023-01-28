@@ -20,10 +20,11 @@ The api doc is available at http://localhost:3001/api-docs by default.
 | Method      | GET                                    |
 | Description | Return the current APY on the network. |
 
-| Endpoint    | /validators/accountinfos                                                              |
-|-------------|---------------------------------------------------------------------------------------|
-| Method      | GET                                                                                   |
-| Description | Return an array of validator enhanced with data from the account infos smart contract |
+
+| Endpoint    | /apy/supply                               |
+|-------------|-------------------------------------------|
+| Method      | GET                                       |
+| Description | Return the current supply of the network. |
 
 | Endpoint    | /deploys/:hash                      |
 |-------------|-------------------------------------|
@@ -62,10 +63,11 @@ Allowing you to choose to expose it or not with network rules.
 ```
 CASPER_RPC_URL=[Full url to node RPC endpoint. Should include :7777/rpc]
 ORIGIN=[List of url separated by comma to allow in the CORS Header]
-DATA_API=[Url of an instance of postgrest in front of your database constructed by the CasperData software. This is optionnal, the software will fallback to a manual discovery instead]
+DATA_API=[Url of an instance of postgrest in front of your database constructed by the CasperParser software. This is optionnal, the software will fallback to a manual discovery instead]
 NODE_ENV=production // Optionnal, will disable the swagger in production
 NETWORK=[Chain network name. Testnet ex : casper-test]
 ACCOUNT_INFO_HASH=[Account info smart contract hash. Testnet ex : 2f36a35edcbaabe17aba805e3fae42699a2bb80c2e0c15189756fdc4895356f8]
+ACCOUNT_INFO_PACKAGE=[Account info smart contract package hash. Testnet ex : b37227b83822aba42c72e9ee441e681f102929d608c7acf28d4bc2024dca0215]
 REDIS_HOST=[Redis hostname. Used for bull queues]
 REDIS_PORT=[Redis port]
 DASHBOARD_PORT=[Bull dashboard & api docs port]
