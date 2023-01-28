@@ -12,23 +12,27 @@ let lastBlockKnown;
  * @returns {Promise<number>}
  */
 async function getAPY() {
-  const lastBlock = (await (await fetch(`${process.env.DATA_API}/blocks?limit=1&order=timestamp.desc`)).json())[0].hash;
-  if (lastBlock !== lastBlockKnown || apy === undefined) {
-    let totalStake = Big(0);
-    let supply = getSupply();
-    const validatorsInfo = (await client.casperRPC.getValidatorsInfo()).auction_state.bids;
-    for (const validatorInfo of validatorsInfo) {
-      if (!validatorInfo.bid.inactive) {
-        if (validatorInfo.bid.delegators.length > 0) {
-          totalStake = totalStake.plus(validatorInfo.bid.delegators.reduce((prev, next) => {
-            return { staked_amount: Big(prev.staked_amount).plus(next.staked_amount).toString() };
-          }).staked_amount);
+  try {
+    const lastBlock = (await (await fetch(`${process.env.DATA_API}/blocks?limit=1&order=timestamp.desc`)).json())[0].hash;
+    if (lastBlock !== lastBlockKnown || apy === undefined) {
+      let totalStake = Big(0);
+      let supply = getSupply();
+      const validatorsInfo = (await client.casperRPC.getValidatorsInfo()).auction_state.bids;
+      for (const validatorInfo of validatorsInfo) {
+        if (!validatorInfo.bid.inactive) {
+          if (validatorInfo.bid.delegators.length > 0) {
+            totalStake = totalStake.plus(validatorInfo.bid.delegators.reduce((prev, next) => {
+              return { staked_amount: Big(prev.staked_amount).plus(next.staked_amount).toString() };
+            }).staked_amount);
+          }
+          totalStake = Big(totalStake).plus(validatorInfo.bid.staked_amount);
         }
-        totalStake = Big(totalStake).plus(validatorInfo.bid.staked_amount);
       }
+      supply = await supply;
+      apy = Big(Big(Big(supply).times(Big("0.08"))).div(totalStake)).times(100).toFixed(2);
     }
-    supply = await supply;
-    apy = Big(Big(Big(supply).times(Big("0.08"))).div(totalStake)).times(100).toFixed(2);
+  } catch {
+    //Ignore error
   }
 }
 

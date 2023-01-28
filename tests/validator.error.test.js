@@ -17,9 +17,8 @@ beforeEach(async () => {
 
 describe('Validator endpoint', () => {
   it('should return 503 to retrieve validator infos when the apy is started with unreachable node', async () => {
-    const res = await request(app)
-      .get('/validators/accountinfos');
-    console.log(res.body);
-    expect(res.statusCode).toEqual(503);
+    await request(app)
+      .get('/validators/accountinfos')
+      .expect(503);
   });
 });
