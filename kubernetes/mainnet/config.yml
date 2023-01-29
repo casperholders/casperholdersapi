@@ -6,7 +6,7 @@ data:
   CASPER_RPC_URL: https://node.casperholders.com
   ORIGIN: https://casperholders.io,https://www.casperholders.io,https://dive.casper.dev,https://div3.casper.dev,https://explore.div3.app,https://div3.in
   PORT: "80"
-  DATA_API: https://data.test.casperholders.com
+  DATA_API: https://data.casperholders.com
   NODE_ENV: "production"
   NETWORK: "casper"
   ACCOUNT_INFO_HASH: "fb8e0215c040691e9bbe945dd22a00989b532b9c2521582538edb95b61156698"
