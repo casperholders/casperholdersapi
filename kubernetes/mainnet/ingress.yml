@@ -12,7 +12,7 @@ metadata:
   name: api-casperholders-tls
 spec:
   entryPoints:
-    - secure
+    - websecure
   routes:
     - match: Host(`api.casperholders.io`)
       middlewares:
