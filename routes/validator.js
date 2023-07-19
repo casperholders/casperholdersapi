@@ -29,9 +29,7 @@ async function updateValidators(force = false) {
     console.log('No refresh account info');
   }
   const validatorsInfo = (await client.casperRPC.getValidatorsInfo()).auction_state.bids;
-  const stateRootHash = await client.casperRPC.getStateRootHash(
-    (await client.casperRPC.getLatestBlockInfo()).block.hash,
-  );
+  const stateRootHash = await client.casperRPC.getStateRootHash();
   const validators = (await client.casperRPC.getValidatorsInfo()).auction_state.era_validators;
   const currentEra = validators[0].validator_weights.map(v => v.public_key);
   const nextEra = validators[1].validator_weights.map(v => v.public_key);
@@ -284,9 +282,7 @@ router.get('/accountinfos/:hash', async function(req, res, next) {
 
 router.get('/metadata/:hash', async function(req, res, next) {
   try {
-    const stateRootHash = await client.casperRPC.getStateRootHash(
-      (await client.casperRPC.getLatestBlockInfo()).block.hash,
-    );
+    const stateRootHash = await client.casperRPC.getStateRootHash();
     res.send(await getAccountInfoData(req.params.hash, stateRootHash));
   } catch (e) {
     res.sendStatus(404);
