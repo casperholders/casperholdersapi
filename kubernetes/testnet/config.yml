@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: api-testnet-casperholders-config
 data:
-  CASPER_RPC_URL: https://node.testnet.casperholders.com
+  CASPER_RPC_URL: http://88.99.69.28:7777
   ORIGIN: http://localhost:8080,https://testnet.casperholders.io,https://dive.casper.dev,https://div3.casper.dev,https://explore.div3.app,https://div3.in
   PORT: "80"
   DATA_API: https://data.testnet.casperholders.com
